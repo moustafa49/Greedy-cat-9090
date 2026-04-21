@@ -1,0 +1,97 @@
+<script>
+    const vegRed = ["tomato", "pepper"], vegYellow = ["corn", "carrot"];
+    const meat = ["shrimp", "cow", "fish", "chicken"];
+    const emojis = {corn:"🌽",tomato:"🍅",carrot:"🥕",pepper:"🌶️",shrimp:"🦐",cow:"🐄",fish:"🐟",chicken:"🐔"};
+    const mults = {corn:5, tomato:5, carrot:5, pepper:5, shrimp:10, cow:15, fish:25, chicken:45};
+    const targetProb = {corn:16.5, tomato:16.5, carrot:16.5, pepper:16.5, shrimp:12, cow:8, fish:4.5, chicken:2.5};
+
+    let db = JSON.parse(localStorage.getItem("v68_db") || "[]");
+
+    function add(f) { db.push(f); save(); }
+    function undo() { db.pop(); save(); }
+    function reset() { if(confirm("Reset Brain?")) { db = []; save(); } }
+    function save() { localStorage.setItem("v68_db", JSON.stringify(db)); update(); }
+
+    function update() {
+        const len = db.length; if(len < 5) return;
+        
+        let hHTML = ""; 
+        for(let i=len-1; i>=Math.max(0, len-30); i--) hHTML += `<div class="h-node">${emojis[db[i]]}</div>`;
+        document.getElementById("history").innerHTML = hHTML;
+
+        let scores = {}, reasons = {};
+
+        // تحليل استخباراتي متقدم (Intelligence Analytics)
+        const last15 = db.slice(-15);
+        const redRatio = last15.filter(x => vegRed.includes(x)).length / 15;
+        const yellowRatio = last15.filter(x => vegYellow.includes(x)).length / 15;
+        const meatRatio = last15.filter(x => meat.includes(x)).length / 15;
+
+        // كشف حالة الماكينة (Machine State)
+        let machineState = "STABLE";
+        if (meatRatio < 0.1) machineState = "READY_TO_BURST"; // الماكينة مشحونة لحوم
+        if (redRatio > 0.7 || yellowRatio > 0.7) machineState = "COLOR_SKEWED"; // انحراف لوني حاد
+
+        [...vegRed, ...vegYellow, ...meat].forEach(f => {
+            let abs = (db.lastIndexOf(f) === -1) ? Math.min(len, 150) : len - 1 - db.lastIndexOf(f);
+            document.getElementById(`abs-${f}`).innerText = abs;
+            
+            // معادلة القناص (Sniper Equation)
+            let basePower = (abs * mults[f]) / targetProb[f];
+            let multiplier = 1.0;
+
+            // 1. منطق الانقلاب اللوني (Color Flip Logic)
+            if (vegYellow.includes(f) && redRatio > 0.6) multiplier *= 3.5;
+            if (vegRed.includes(f) && yellowRatio > 0.6) multiplier *= 3.5;
+
+            // 2. منطق صيد النوادر (Rare Hunting)
+            if (f === 'chicken' && abs > 90) multiplier *= 5.0;
+            if (f === 'fish' && abs > 50) multiplier *= 4.0;
+
+            // 3. كشف الجعفلة (Rigging Protection)
+            if (machineState === "READY_TO_BURST" && meat.includes(f)) multiplier *= 2.5;
+
+            scores[f] = basePower * multiplier;
+            
+            // تحديد السبب العلمي
+            if (multiplier > 4) reasons[f] = "CRITICAL";
+            else if (multiplier > 2) reasons[f] = "INVERSION";
+            else reasons[f] = "STABLE";
+        });
+
+        let allSorted = [...vegRed, ...vegYellow, ...meat].sort((a,b) => scores[b] - scores[a]);
+        
+        // --- نظام التوصية "الخارق" ---
+        const bestSignal = scores[allSorted[0]];
+        let actionMessage = bestSignal > 500 ? "🔥 SHOOT NOW (فرصة ذهبية)" : (bestSignal > 200 ? "✅ PLAY (فرصة جيدة)" : "❌ WAIT (انتظر انقلاب النمط)");
+
+        document.getElementById("livePicks").innerHTML = allSorted.slice(0, 4).map(x => {
+            let confidence = Math.min(99, Math.round((scores[x] / bestSignal) * 100));
+            return `
+            <div class="p-card ${confidence > 80 ? 'hot' : ''}">
+                <span class="emoji">${emojis[x]}</span>
+                <span class="tag">${reasons[x]}</span>
+                <span class="perc">${confidence}%</span>
+            </div>`;
+        }).join("");
+
+        // تحديث الأنظمة
+        const d = (list) => list.map(x => emojis[x]).join(" ");
+        let sV = [...vegRed, ...vegYellow].sort((a,b) => scores[b] - scores[a]);
+        let sM = [...meat].sort((a,b) => scores[b] - scores[a]);
+
+        document.getElementById("g6").innerText = d([...sV.slice(0,3), ...sM.slice(0,3)]);
+        document.getElementById("g5").innerText = d([...sV.slice(0,3), ...sM.slice(0,2)]);
+        document.getElementById("g4").innerText = d([...sV.slice(0,2), ...sM.slice(0,2)]);
+
+        document.getElementById("stats").innerHTML = allSorted.map(f => `
+            <tr>
+                <td>${emojis[f]}</td>
+                <td>${document.getElementById(`abs-${f}`).innerText}</td>
+                <td class="score-win">${Math.round(scores[f])}</td>
+                <td style="color:${scores[f] > 400 ? 'var(--win)' : 'var(--neon)'}">${actionMessage}</td>
+            </tr>
+        `).join("");
+    }
+    update();
+</script>
