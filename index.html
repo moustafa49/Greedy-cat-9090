@@ -3,39 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V130 ULTIMATE REPEAT SNIPER</title>
+    <title>V150 OMNI REPEAT PRO</title>
     <style>
         :root { --bg: #050505; --panel: #0d1117; --brd: #30363d; --neon: #00f2ff; --win: #00ff41; --gold: #ffd700; --red: #ff4d4d; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 10px; overflow-x: hidden; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 10px; }
         .container { max-width: 480px; margin: auto; border: 1px solid var(--brd); border-radius: 20px; padding: 15px; background: var(--panel); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .signal-bar { text-align: center; margin-bottom: 15px; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 16px; border: 1px solid transparent; transition: 0.3s; }
+        
+        /* شريط الحالة العلوي */
+        .status-bar { text-align: center; padding: 12px; border-radius: 12px; font-weight: bold; border: 1px solid transparent; margin-bottom: 15px; transition: 0.3s; }
         .wait { background: rgba(255, 77, 77, 0.1); color: var(--red); border-color: var(--red); }
-        .repeat-mode { background: rgba(255, 215, 0, 0.2); color: var(--gold); border-color: var(--gold); box-shadow: 0 0 15px var(--gold); }
-        .shoot { background: rgba(0, 255, 65, 0.2); color: var(--win); border-color: var(--win); box-shadow: 0 0 15px var(--win); }
-        .g-label { font-size: 10px; color: var(--gold); font-weight: bold; margin-bottom: 5px; text-align: center; letter-spacing: 1px; }
-        .g-icons { font-size: 26px; letter-spacing: 10px; min-height: 40px; text-align: center; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 5px; }
-        .history { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding: 10px 5px; background: rgba(0,0,0,0.3); border-radius: 10px; }
+        .repeat-alert { background: rgba(255, 215, 0, 0.2); color: var(--gold); border-color: var(--gold); box-shadow: 0 0 15px var(--gold); }
+        .shoot { background: rgba(0, 255, 65, 0.2); color: var(--win); border-color: var(--win); }
+
+        /* الأنظمة الذكية */
+        .systems-box { border: 1.5px solid var(--gold); border-radius: 15px; padding: 15px; background: rgba(0,0,0,0.4); margin-bottom: 20px; }
+        .sys-label { font-size: 10px; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; }
+        .sys-icons { font-size: 26px; letter-spacing: 12px; min-height: 40px; text-align: center; border-bottom: 1px solid #222; margin-bottom: 12px; padding-bottom: 5px; }
+
+        /* شريط التاريخ */
+        .history { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding: 10px; background: #000; border-radius: 12px; border: 1px solid #222; }
         .h-node { min-width: 40px; height: 40px; background: #161b22; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 1px solid #30363d; }
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-        .btn { background: #161b22; border: 1px solid var(--brd); border-radius: 12px; padding: 15px 0; color: #fff; cursor: pointer; transition: 0.2s; font-size: 20px; }
-        .btn:active { transform: scale(0.9); background: #30363d; }
-        .btn small { display: block; font-size: 11px; color: var(--neon); margin-top: 5px; }
-        .footer-btns { display: flex; gap: 10px; margin-top: 10px; }
-        .f-btn { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #30363d; cursor: pointer; font-weight: bold; }
+
+        /* لوحة الأزرار */
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .btn { background: #161b22; border: 1px solid var(--brd); border-radius: 12px; padding: 15px 0; color: #fff; cursor: pointer; font-size: 20px; }
+        .btn small { display: block; font-size: 11px; color: var(--neon); margin-top: 4px; }
+        
+        .footer { display: flex; gap: 10px; margin-top: 15px; }
+        .f-btn { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #333; background: #21262d; color: #fff; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="signal" class="signal-bar wait">بانتظار إدخال النتائج...</div>
+    <div id="status" class="status-bar wait">مراقبة الشريط للتحليل...</div>
 
-    <div style="border: 1.5px solid var(--gold); border-radius: 15px; padding: 15px; margin-bottom: 20px; background: rgba(0,0,0,0.4);">
-        <div class="g-label">OMNI 6 (نظام التكرار + التغطية)</div>
-        <div id="g6" class="g-icons">---</div>
-        <div class="g-label">ULTRA 5 (توازن الجعفلة)</div>
-        <div id="g5" class="g-icons">---</div>
-        <div class="g-label">STABLE 4 (قناص الانقلاب الصافي)</div>
-        <div id="g4" class="g-icons">---</div>
+    <div class="systems-box">
+        <div class="sys-label">OMNI 6 (نظام التكرار + التغطية)</div>
+        <div id="g6" class="sys-icons">---</div>
+        <div class="sys-label">ULTRA 5 (توازن الجعفلة)</div>
+        <div id="g5" class="sys-icons">---</div>
+        <div class="sys-label">STABLE 4 (قناص الانقلاب الصافي)</div>
+        <div id="g4" class="sys-icons">---</div>
     </div>
 
     <div id="history" class="history"></div>
@@ -51,85 +60,75 @@
         <button class="btn" onclick="add('chicken')">🐔<small id="abs-chicken">0</small></button>
     </div>
 
-    <div class="footer-btns">
-        <button onclick="undo()" class="f-btn" style="background:#21262d; color:#fff;">تراجع ↩️</button>
-        <button onclick="reset()" class="f-btn" style="background:#21262d; color:var(--red);">تصفير 🗑️</button>
+    <div class="footer">
+        <button onclick="undo()" class="f-btn">تراجع ↩️</button>
+        <button onclick="reset()" class="f-btn" style="color:var(--red);">تصفير 🗑️</button>
     </div>
 </div>
 
 <script>
     const emojis = {corn:"🌽", tomato:"🍅", carrot:"🥕", pepper:"🌶️", shrimp:"🦐", cow:"🐄", fish:"🐟", chicken:"🐔"};
     const config = {corn:16, tomato:16, carrot:16, pepper:16, shrimp:12, cow:8, fish:5, chicken:2.5};
-    let db = JSON.parse(localStorage.getItem("v130_db") || "[]");
+    let db = JSON.parse(localStorage.getItem("v150_db") || "[]");
 
     function add(f) { db.push(f); save(); }
     function undo() { db.pop(); save(); }
-    function reset() { if(confirm("هل تريد مسح كافة البيانات؟")) { db = []; save(); } }
-    function save() { localStorage.setItem("v130_db", JSON.stringify(db)); update(); }
+    function reset() { if(confirm("مسح كل البيانات؟")) { db = []; save(); } }
+    function save() { localStorage.setItem("v150_db", JSON.stringify(db)); update(); }
 
     function update() {
         const len = db.length;
-        if (len === 0) {
-            document.getElementById("history").innerHTML = "";
-            return;
-        }
+        if (len === 0) return;
 
-        // 1. تحديث شريط التاريخ
-        let hHTML = "";
-        for (let i = len - 1; i >= Math.max(0, len - 20); i--) {
-            hHTML += `<div class="h-node">${emojis[db[i]]}</div>`;
-        }
-        document.getElementById("history").innerHTML = hHTML;
+        // تحديث شريط التاريخ
+        document.getElementById("history").innerHTML = db.slice(-20).reverse().map(x => `<div class="h-node">${emojis[x]}</div>`).join("");
 
-        // 2. تحليل عقل التكرار (Repeat Logic)
-        const lastItem = db[len - 1];
-        const secondLast = db[len - 2];
-        const isRepeatMode = (len > 1 && lastItem === secondLast);
+        // كشف نمط التكرار (عقل الجعفلة)
+        const last = db[len-1];
+        const secondLast = db[len-2];
+        const isRepeating = (len > 1 && last === secondLast);
 
         let scores = {};
         Object.keys(config).forEach(f => {
             let lastIdx = db.lastIndexOf(f);
-            let abs = (lastIdx === -1) ? Math.min(len, 120) : (len - 1 - lastIdx);
+            let abs = (lastIdx === -1) ? Math.min(len, 100) : (len - 1 - lastIdx);
             document.getElementById(`abs-${f}`).innerText = abs;
 
-            // الوزن الأساسي بناءً على الغياب والاحتمالية
             let score = (abs * 10) / (100 / config[f]);
 
-            // --- عقل الجعفلة: لو فيه تكرار متتالي، ضعه كأولوية قصوى ---
-            if (f === lastItem && isRepeatMode) {
-                score += 1000; // رفع التكرار ليكون الخيار رقم 1
+            // --- التعديل الجوهري: لو فيه تكرار، حطه أول واحد فوراً ---
+            if (f === last && isRepeating) {
+                score += 5000; // قوة إجبارية للتكرار
             }
 
-            // Monte Carlo لضبط الأصناف النادرة
-            if (f === 'chicken' && abs < 70) score *= 0.1;
-            if (f === 'fish' && abs < 35) score *= 0.2;
+            // قيود مونت كارلو للأصناف النادرة
+            if (f === 'chicken' && abs < 80) score *= 0.1;
+            if (f === 'fish' && abs < 40) score *= 0.2;
 
             scores[f] = score;
         });
 
-        // 3. ترتيب التوقعات وتحديث الأنظمة
+        // ترتيب التشكيلات بناءً على القوة
         let sorted = Object.keys(config).sort((a, b) => scores[b] - scores[a]);
         
-        const d = (list) => list.map(x => emojis[x]).join(" ");
+        const d = (list) => list.map(x => emojis[x]).join("");
         document.getElementById("g6").innerText = d(sorted.slice(0, 6));
         document.getElementById("g5").innerText = d(sorted.slice(0, 5));
         document.getElementById("g4").innerText = d(sorted.slice(0, 4));
 
-        // 4. تحديث شريط الإشارة
-        const signal = document.getElementById("signal");
-        if (isRepeatMode) {
-            signal.innerText = `🚨 كشف تكرار: الماكينة متمسكة بـ ${emojis[lastItem]}`;
-            signal.className = "signal-bar repeat-mode";
+        // شريط الإشارة الذكي
+        const status = document.getElementById("status");
+        if (isRepeating) {
+            status.innerText = `🚨 كشف تكرار مستمر لـ ${emojis[last]}`;
+            status.className = "status-bar repeat-alert";
         } else if (scores[sorted[0]] > 400) {
-            signal.innerText = "🔥 SHOOT: لحظة الانقلاب / كسر النمط";
-            signal.className = "signal-bar shoot";
+            status.innerText = "🔥 SHOOT: ادخل الآن (فرصة انقلاب)";
+            status.className = "status-bar shoot";
         } else {
-            signal.innerText = "⌛ مراقبة الشريط للتحليل...";
-            signal.className = "signal-bar wait";
+            status.innerText = "⌛ مراقبة الشريط للتحليل...";
+            status.className = "status-bar wait";
         }
     }
-
-    // تشغيل التحديث عند تحميل الصفحة
     window.onload = update;
 </script>
 </body>
