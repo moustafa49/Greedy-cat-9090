@@ -3,32 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V300 OMNI AI - ULTIMATE LEARNING</title>
+    <title>V400 MASTER - OMNI AI PRO</title>
     <style>
-        :root { --bg: #050505; --panel: #0d1117; --brd: #30363d; --neon: #00f2ff; --win: #00ff41; --gold: #ffd700; --red: #ff4d4d; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 10px; overflow-x: hidden; }
+        :root { --bg: #050505; --panel: #0d1117; --brd: #30363d; --neon: #00f2ff; --gold: #ffd700; --red: #ff4d4d; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 10px; }
         .container { max-width: 480px; margin: auto; border: 1px solid var(--brd); border-radius: 20px; padding: 15px; background: var(--panel); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        
         .status-bar { text-align: center; padding: 12px; border-radius: 12px; font-weight: bold; border: 1px solid transparent; margin-bottom: 15px; transition: 0.3s; font-size: 14px; }
         .active-mode { background: rgba(0, 242, 255, 0.1); color: var(--neon); border-color: var(--neon); }
-        .pattern-mode { background: rgba(255, 215, 0, 0.1); color: var(--gold); border-color: var(--gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
-
+        .pattern-mode { background: rgba(255, 215, 0, 0.1); color: var(--gold); border-color: var(--gold); }
         .systems-box { border: 1.5px solid var(--gold); border-radius: 15px; padding: 15px; background: rgba(0,0,0,0.4); margin-bottom: 20px; }
-        .sys-label { font-size: 11px; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 8px; }
+        .sys-label { font-size: 11px; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 8px; opacity: 0.8; }
         .sys-icons { font-size: 28px; letter-spacing: 12px; min-height: 45px; text-align: center; border-bottom: 1px solid #222; margin-bottom: 12px; padding-bottom: 5px; }
-
         .history { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding: 10px; background: #000; border-radius: 12px; border: 1px solid #222; flex-direction: row-reverse; min-height: 42px; }
         .h-node { min-width: 40px; height: 40px; background: #161b22; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 1px solid #30363d; }
-
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .btn { background: #161b22; border: 1px solid var(--brd); border-radius: 12px; padding: 15px 0; color: #fff; cursor: pointer; font-size: 22px; transition: 0.2s; }
-        .btn:active { transform: scale(0.9); background: #30363d; }
+        .btn:active { transform: scale(0.95); background: #30363d; }
         .btn small { display: block; font-size: 11px; color: var(--neon); margin-top: 4px; font-weight: bold; }
-        
         .stats-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; text-align: center; color: #8b949e; }
-        .stats-table th { padding: 10px; border-bottom: 1px solid #30363d; }
+        .stats-table th { padding: 10px; border-bottom: 1px solid var(--brd); }
         .stats-table td { padding: 12px; border-bottom: 1px dotted #21262d; }
-
         .footer { display: flex; gap: 10px; margin-top: 20px; }
         .f-btn { flex: 1; padding: 12px; border-radius: 12px; background: #21262d; color: #fff; font-weight: bold; border: 1px solid #333; cursor: pointer; }
     </style>
@@ -36,14 +30,14 @@
 <body>
 
 <div class="container">
-    <div id="status" class="status-bar active-mode">⌛ مراقبة الشريط للتحليل...</div>
+    <div id="status" class="status-bar active-mode">⌛ مراقبة النمط التسلسلي...</div>
 
     <div class="systems-box">
-        <div class="sys-label">OMNI 6 (3+3 - القناص الذكي)</div>
+        <div class="sys-label">OMNI 6 (3 خضار + 3 لحم - ذكاء الرد)</div>
         <div id="g6" class="sys-icons">---</div>
-        <div class="sys-label">ULTRA 5 (3+2 - توازن الجعفلة)</div>
+        <div class="sys-label">ULTRA 5 (3 خضار + 2 لحم - توازن النمط)</div>
         <div id="g5" class="sys-icons">---</div>
-        <div class="sys-label">STABLE 4 (2+2 - أمان الانقلاب)</div>
+        <div class="sys-label">STABLE 4 (2 خضار + 2 لحم - قناص الانقلاب)</div>
         <div id="g4" class="sys-icons">---</div>
     </div>
 
@@ -84,12 +78,12 @@
     const veggies = ['corn', 'tomato', 'carrot', 'pepper'];
     const meats = ['shrimp', 'cow', 'fish', 'chicken'];
 
-    let db = JSON.parse(localStorage.getItem("v300_master_db") || "[]");
+    let db = JSON.parse(localStorage.getItem("v400_final_db") || "[]");
 
     function add(f) { db.push(f); save(); }
     function undo() { db.pop(); save(); }
-    function reset() { if(confirm("مسح كافة البيانات؟")) { db = []; save(); } }
-    function save() { localStorage.setItem("v300_master_db", JSON.stringify(db)); update(); }
+    function reset() { if(confirm("مسح كل البيانات؟")) { db = []; save(); } }
+    function save() { localStorage.setItem("v400_final_db", JSON.stringify(db)); update(); }
 
     function update() {
         const len = db.length;
@@ -99,14 +93,15 @@
             return;
         }
 
-        // 1. تحديث شريط التاريخ
+        // 1. شريط التاريخ
         document.getElementById("history").innerHTML = db.slice(-20).map(x => `<div class="h-node">${emojis[x]}</div>`).join("");
 
         const last = db[len-1], p1 = db[len-2], p2 = db[len-3], p3 = db[len-4];
         
-        // 2. كشف الأنماط (AI Behavior)
-        const isAlternating = (len >= 4 && last === p2 && p1 === p3 && last !== p1); // طماطم-جزر-طماطم
-        const isRepeating = (len >= 2 && last === p1); // درة-درة
+        // عقل كشف الأنماط النشطة (التناوب والتكرار)
+        const recentSix = db.slice(-6);
+        const isPatternActive = (f) => recentSix.filter(x => x === f).length >= 2;
+        const isAlternating = (len >= 4 && last === p2 && p1 === p3 && last !== p1);
 
         let scores = {}, tableHTML = "";
         
@@ -115,46 +110,44 @@
             let abs = (lastIdx === -1) ? Math.min(len, 100) : (len - 1 - lastIdx);
             document.getElementById(`abs-${f}`).innerText = abs;
 
-            // الحساب الأساسي (مونت كارلو)
             let score = Math.round((abs * 10) / (100 / config[f]));
 
-            // تطبيق "عقل التعلم" (Adaptive Learning)
-            if (f === last) score += 10000; // أولوية الصنف الأخير دائمًا
+            // تطبيق قوانين الذكاء الاصطناعي
+            if (f === last) score += 15000; // إجبار الصنف الأخير على القمة
             
+            if (isPatternActive(f)) score += 9000; // الحفاظ على الأصناف "الملك" في الشريط
+
             if (isAlternating) {
-                if (f !== last && f !== p1) score += 8000; // توقع كسر النمط (الانقلاب)
-                else score += 2000; 
+                if (f !== last && f !== p1) score += 7000; // توقع كسر النمط
             }
 
-            if (isRepeating && f === last) score += 5000; // دعم موجة التكرار
-
-            // قيود الأصناف النادرة
-            if (f === 'chicken' && abs < 70) score = 0;
-            if (f === 'fish' && abs < 35) score *= 0.5;
+            // قيود النادر
+            if (f === 'chicken' && abs < 60) score = 0;
+            if (f === 'fish' && abs < 30) score *= 0.5;
 
             scores[f] = score;
-            tableHTML += `<tr><td>${emojis[f]}</td><td>${abs}</td><td>${score}</td><td style="color:var(--neon)">${score > 500 ? 'STABLE' : 'تحليل...'}</td></tr>`;
+            tableHTML += `<tr><td>${emojis[f]}</td><td>${abs}</td><td>${score}</td><td style="color:var(--neon)">${score > 1000 ? 'نشط' : 'تحليل'}</td></tr>`;
         });
 
         document.getElementById("stats-body").innerHTML = tableHTML;
 
-        // 3. قاعدة الفصل الصارمة (3+3) لضمان عدم تكرار نوع واحد
+        // 2. تطبيق قاعدة الفصل الصارمة (3+3)
         let sortedVeg = veggies.sort((a, b) => scores[b] - scores[a]);
         let sortedMeat = meats.sort((a, b) => scores[b] - scores[a]);
 
         const d = (v, m) => v.concat(m).map(x => emojis[x]).join("");
 
-        document.getElementById("g6").innerText = d(sortedVeg.slice(0,3), sortedMeat.slice(0,3)); // 3+3
-        document.getElementById("g5").innerText = d(sortedVeg.slice(0,3), sortedMeat.slice(0,2)); // 3+2
-        document.getElementById("g4").innerText = d(sortedVeg.slice(0,2), sortedMeat.slice(0,2)); // 2+2
+        document.getElementById("g6").innerText = d(sortedVeg.slice(0,3), sortedMeat.slice(0,3));
+        document.getElementById("g5").innerText = d(sortedVeg.slice(0,3), sortedMeat.slice(0,2));
+        document.getElementById("g4").innerText = d(sortedVeg.slice(0,2), sortedMeat.slice(0,2));
 
-        // 4. تحديث شريط الحالة
+        // 3. حالة الشريط
         const status = document.getElementById("status");
         if (isAlternating) {
-            status.innerHTML = `🔄 كشف نمط متناوب: ${emojis[p1]} ↔️ ${emojis[last]} (توقع انقلاب)`;
+            status.innerHTML = `⚠️ كشف تناوب: ${emojis[p1]} ↔️ ${emojis[last]} (توقع الرد)`;
             status.className = "status-bar pattern-mode";
         } else {
-            status.innerHTML = `✅ تحليل متوازن: آخر صنف ${emojis[last]}`;
+            status.innerHTML = `✅ تحليل ذكي: آخر صنف ${emojis[last]}`;
             status.className = "status-bar active-mode";
         }
     }
