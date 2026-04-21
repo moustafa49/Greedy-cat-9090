@@ -1,3 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V68 MASTERMIND - PRO RADAR</title>
+    <style>
+        :root { --bg: #050505; --panel: #0d1117; --brd: #30363d; --neon: #00f2ff; --win: #00ff41; --gold: #ffd700; --red: #ff4d4d; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 10px; }
+        .container { max-width: 480px; margin: auto; border: 1px solid var(--brd); border-radius: 20px; padding: 15px; background: var(--panel); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        .live-picks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .p-card { background: #000; border: 1px solid #333; border-radius: 12px; padding: 12px 5px; text-align: center; transition: 0.3s; }
+        .p-card.hot { border-color: var(--gold); box-shadow: 0 0 15px rgba(255,215,0,0.4); transform: scale(1.05); }
+        .p-card .emoji { font-size: 32px; display: block; margin-bottom: 5px; }
+        .p-card .tag { font-size: 9px; color: var(--neon); font-weight: bold; text-transform: uppercase; display: block; }
+        .p-card .perc { font-size: 12px; color: var(--win); font-weight: bold; }
+
+        .group-box { border: 1.5px solid var(--gold); border-radius: 15px; padding: 10px; margin-bottom: 20px; background: rgba(0,0,0,0.4); }
+        .g-item { text-align: center; padding: 8px 0; border-bottom: 1px solid #222; }
+        .g-label { font-size: 10px; color: var(--gold); letter-spacing: 1px; font-weight: bold; margin-bottom: 5px; }
+        .g-icons { display: flex; justify-content: center; gap: 12px; font-size: 24px; }
+
+        .history { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 15px; padding-bottom: 5px; }
+        .h-node { min-width: 38px; height: 38px; background: #161b22; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 1px solid #30363d; }
+
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
+        .btn { background: #161b22; border: 1px solid var(--brd); border-radius: 12px; padding: 15px 0; cursor: pointer; color: #fff; transition: 0.2s; }
+        .btn:active { transform: translateY(2px); background: #21262d; }
+        .btn span { font-size: 11px; color: var(--neon); display: block; margin-top: 4px; font-weight: bold; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 11px; background: #000; border-radius: 10px; overflow: hidden; }
+        th { background: #161b22; color: var(--neon); padding: 12px; border-bottom: 2px solid #333; text-align: center; }
+        td { padding: 12px; text-align: center; border-bottom: 1px solid #111; }
+        .score-win { color: var(--win); font-weight: bold; }
+
+        .sys { display: flex; gap: 10px; margin-top: 15px; }
+        .sys-btn { flex: 1; padding: 14px; border-radius: 12px; background: #21262d; border: 1px solid var(--brd); color: #fff; font-weight: bold; cursor: pointer; }
+        
+        .signal-bar { text-align: center; margin-bottom: 15px; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 14px; }
+        .shoot { background: rgba(0, 255, 65, 0.2); color: var(--win); border: 1px solid var(--win); }
+        .wait { background: rgba(255, 77, 77, 0.2); color: var(--red); border: 1px solid var(--red); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="signal" class="signal-bar wait">جاري تحليل البيانات... أدخل 5 نتائج على الأقل</div>
+
+    <div id="livePicks" class="live-picks"></div>
+
+    <div class="group-box">
+        <div class="g-item">
+            <div class="g-label">OMNI 6 (القناص - تغطية كاملة)</div>
+            <div id="g6" class="g-icons"></div>
+        </div>
+        <div class="g-item" style="border:none">
+            <div class="g-label">STABLE 4 (توفير - أمان عالي)</div>
+            <div id="g4" class="g-icons"></div>
+        </div>
+    </div>
+
+    <div id="history" class="history"></div>
+
+    <div class="grid">
+        <button class="btn" onclick="add('corn')">🌽<span id="abs-corn">0</span></button>
+        <button class="btn" onclick="add('tomato')">🍅<span id="abs-tomato">0</span></button>
+        <button class="btn" onclick="add('carrot')">🥕<span id="abs-carrot">0</span></button>
+        <button class="btn" onclick="add('pepper')">🌶️<span id="abs-pepper">0</span></button>
+        <button class="btn" onclick="add('shrimp')">🦐<span id="abs-shrimp">0</span></button>
+        <button class="btn" onclick="add('cow')">🐄<span id="abs-cow">0</span></button>
+        <button class="btn" onclick="add('fish')">🐟<span id="abs-fish">0</span></button>
+        <button class="btn" onclick="add('chicken')">🐔<span id="abs-chicken">0</span></button>
+    </div>
+
+    <table>
+        <thead><tr><th>الرمز</th><th>غياب</th><th>قوة</th><th>التحليل الذكي</th></tr></thead>
+        <tbody id="stats"></tbody>
+    </table>
+
+    <div class="sys">
+        <button class="sys-btn" onclick="undo()">تراجع</button>
+        <button class="sys-btn" onclick="reset()" style="color:var(--red)">تصفير العقل</button>
+    </div>
+</div>
+
 <script>
     const vegRed = ["tomato", "pepper"], vegYellow = ["corn", "carrot"];
     const meat = ["shrimp", "cow", "fish", "chicken"];
@@ -9,79 +95,73 @@
 
     function add(f) { db.push(f); save(); }
     function undo() { db.pop(); save(); }
-    function reset() { if(confirm("Reset Brain?")) { db = []; save(); } }
+    function reset() { if(confirm("هل تريد تصفير الذاكرة؟")) { db = []; save(); } }
     function save() { localStorage.setItem("v68_db", JSON.stringify(db)); update(); }
 
     function update() {
-        const len = db.length; if(len < 5) return;
+        const len = db.length;
+        const signalDiv = document.getElementById("signal");
         
+        if(len < 5) {
+            signalDiv.innerText = `أدخل ${5 - len} نتائج إضافية للبدء...`;
+            return;
+        }
+
         let hHTML = ""; 
         for(let i=len-1; i>=Math.max(0, len-30); i--) hHTML += `<div class="h-node">${emojis[db[i]]}</div>`;
         document.getElementById("history").innerHTML = hHTML;
 
         let scores = {}, reasons = {};
-
-        // تحليل استخباراتي متقدم (Intelligence Analytics)
         const last15 = db.slice(-15);
         const redRatio = last15.filter(x => vegRed.includes(x)).length / 15;
         const yellowRatio = last15.filter(x => vegYellow.includes(x)).length / 15;
-        const meatRatio = last15.filter(x => meat.includes(x)).length / 15;
-
-        // كشف حالة الماكينة (Machine State)
-        let machineState = "STABLE";
-        if (meatRatio < 0.1) machineState = "READY_TO_BURST"; // الماكينة مشحونة لحوم
-        if (redRatio > 0.7 || yellowRatio > 0.7) machineState = "COLOR_SKEWED"; // انحراف لوني حاد
 
         [...vegRed, ...vegYellow, ...meat].forEach(f => {
             let abs = (db.lastIndexOf(f) === -1) ? Math.min(len, 150) : len - 1 - db.lastIndexOf(f);
             document.getElementById(`abs-${f}`).innerText = abs;
             
-            // معادلة القناص (Sniper Equation)
-            let basePower = (abs * mults[f]) / targetProb[f];
-            let multiplier = 1.0;
+            // معادلة الخسارة الأدنى (Risk Mitigation Equation)
+            let score = (abs * mults[f]) / (targetProb[f] / 10);
+            let reason = "بحث";
 
-            // 1. منطق الانقلاب اللوني (Color Flip Logic)
-            if (vegYellow.includes(f) && redRatio > 0.6) multiplier *= 3.5;
-            if (vegRed.includes(f) && yellowRatio > 0.6) multiplier *= 3.5;
+            // رادار انقلاب الألوان (Color Shift Radar)
+            if (vegYellow.includes(f) && redRatio > 0.6) { score *= 4; reason = "انقلاب أصفر"; }
+            if (vegRed.includes(f) && yellowRatio > 0.6) { score *= 4; reason = "انقلاب أحمر"; }
 
-            // 2. منطق صيد النوادر (Rare Hunting)
-            if (f === 'chicken' && abs > 90) multiplier *= 5.0;
-            if (f === 'fish' && abs > 50) multiplier *= 4.0;
+            // رادار النوادر (Rare Sniping)
+            if (f === 'chicken' && abs > 90) { score *= 6; reason = "انفجار وشيك"; }
+            if (f === 'fish' && abs > 50) { score *= 4.5; reason = "فجوة سمكة"; }
 
-            // 3. كشف الجعفلة (Rigging Protection)
-            if (machineState === "READY_TO_BURST" && meat.includes(f)) multiplier *= 2.5;
-
-            scores[f] = basePower * multiplier;
-            
-            // تحديد السبب العلمي
-            if (multiplier > 4) reasons[f] = "CRITICAL";
-            else if (multiplier > 2) reasons[f] = "INVERSION";
-            else reasons[f] = "STABLE";
+            scores[f] = score; reasons[f] = reason;
         });
 
         let allSorted = [...vegRed, ...vegYellow, ...meat].sort((a,b) => scores[b] - scores[a]);
-        
-        // --- نظام التوصية "الخارق" ---
-        const bestSignal = scores[allSorted[0]];
-        let actionMessage = bestSignal > 500 ? "🔥 SHOOT NOW (فرصة ذهبية)" : (bestSignal > 200 ? "✅ PLAY (فرصة جيدة)" : "❌ WAIT (انتظر انقلاب النمط)");
+        const maxScore = scores[allSorted[0]];
+
+        // تحديث إشارة القناص
+        if (maxScore > 600) {
+            signalDiv.innerText = "🔥 SHOOT NOW: فرصة نجاح 90%";
+            signalDiv.className = "signal-bar shoot";
+        } else {
+            signalDiv.innerText = "❌ WAIT: الماكينة في حالة تجميع.. انتظر";
+            signalDiv.className = "signal-bar wait";
+        }
 
         document.getElementById("livePicks").innerHTML = allSorted.slice(0, 4).map(x => {
-            let confidence = Math.min(99, Math.round((scores[x] / bestSignal) * 100));
+            let conf = Math.min(99, Math.round((scores[x]/maxScore)*100));
             return `
-            <div class="p-card ${confidence > 80 ? 'hot' : ''}">
+            <div class="p-card ${conf > 85 ? 'hot' : ''}">
                 <span class="emoji">${emojis[x]}</span>
                 <span class="tag">${reasons[x]}</span>
-                <span class="perc">${confidence}%</span>
+                <span class="perc">${conf}%</span>
             </div>`;
         }).join("");
 
-        // تحديث الأنظمة
         const d = (list) => list.map(x => emojis[x]).join(" ");
         let sV = [...vegRed, ...vegYellow].sort((a,b) => scores[b] - scores[a]);
         let sM = [...meat].sort((a,b) => scores[b] - scores[a]);
 
         document.getElementById("g6").innerText = d([...sV.slice(0,3), ...sM.slice(0,3)]);
-        document.getElementById("g5").innerText = d([...sV.slice(0,3), ...sM.slice(0,2)]);
         document.getElementById("g4").innerText = d([...sV.slice(0,2), ...sM.slice(0,2)]);
 
         document.getElementById("stats").innerHTML = allSorted.map(f => `
@@ -89,9 +169,12 @@
                 <td>${emojis[f]}</td>
                 <td>${document.getElementById(`abs-${f}`).innerText}</td>
                 <td class="score-win">${Math.round(scores[f])}</td>
-                <td style="color:${scores[f] > 400 ? 'var(--win)' : 'var(--neon)'}">${actionMessage}</td>
+                <td style="color:var(--neon)">${maxScore > 600 && scores[f] > 300 ? 'دخول آمن' : 'تحليل مستمر'}</td>
             </tr>
         `).join("");
     }
-    update();
+    window.onload = update;
 </script>
+
+</body>
+</html>
