@@ -3,56 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V70 MASTERMIND - SNIPER MODE</title>
+    <title>V70 SNIPER MASTERMIND</title>
     <style>
         :root { --bg: #050505; --panel: #0d1117; --brd: #30363d; --neon: #00f2ff; --win: #00ff41; --gold: #ffd700; --red: #ff4d4d; }
         body { font-family: sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 10px; }
-        .container { max-width: 480px; margin: auto; border: 1px solid var(--brd); border-radius: 20px; padding: 15px; background: var(--panel); }
-        .signal-bar { text-align: center; margin-bottom: 15px; padding: 12px; border-radius: 12px; font-weight: bold; transition: 0.5s; font-size: 16px; }
+        .container { max-width: 480px; margin: auto; border: 1px solid var(--brd); border-radius: 20px; padding: 15px; background: var(--panel); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        /* إشارة القناص */
+        .signal-bar { text-align: center; margin-bottom: 15px; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 16px; transition: 0.5s; }
         .wait { background: rgba(255, 77, 77, 0.1); color: var(--red); border: 1px solid var(--red); }
         .shoot { background: rgba(0, 255, 65, 0.2); color: var(--win); border: 1px solid var(--win); box-shadow: 0 0 15px var(--win); }
+
+        /* كروت التوقعات */
         .live-picks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-        .p-card { background: #000; border: 1px solid #333; border-radius: 12px; padding: 10px 5px; text-align: center; }
-        .p-card.hot { border-color: var(--gold); }
+        .p-card { background: #000; border: 1px solid #333; border-radius: 12px; padding: 10px 5px; text-align: center; border-bottom: 3px solid transparent; }
+        .p-card.hot { border-color: var(--gold); background: rgba(255, 215, 0, 0.05); }
         .p-card .emoji { font-size: 28px; display: block; }
-        .p-card .tag { font-size: 8px; color: var(--neon); display: block; margin: 4px 0; }
+        .p-card .tag { font-size: 8px; color: var(--neon); display: block; margin: 4px 0; font-weight: bold; }
         .p-card .perc { font-size: 12px; color: var(--win); font-weight: bold; }
-        .history { display: flex; gap: 5px; overflow-x: auto; margin-bottom: 15px; padding: 5px; }
+
+        /* أنظمة الـ Picks */
+        .group-box { border: 1.5px solid var(--gold); border-radius: 15px; padding: 12px; margin-bottom: 20px; background: rgba(0,0,0,0.4); text-align: center; }
+        .g-section { margin-bottom: 12px; }
+        .g-label { font-size: 10px; color: var(--gold); font-weight: bold; margin-bottom: 5px; letter-spacing: 1px; }
+        .g-icons { font-size: 24px; letter-spacing: 5px; min-height: 30px; }
+
+        /* التاريخ */
+        .history { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 15px; padding: 5px; border-bottom: 1px solid #222; }
         .h-node { min-width: 35px; height: 35px; background: #161b22; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid #30363d; }
+
+        /* أزرار الإدخال */
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
-        .btn { background: #161b22; border: 1px solid var(--brd); border-radius: 10px; padding: 12px 0; color: #fff; cursor: pointer; }
-        table { width: 100%; border-collapse: collapse; font-size: 10px; }
+        .btn { background: #161b22; border: 1px solid var(--brd); border-radius: 10px; padding: 12px 0; color: #fff; cursor: pointer; transition: 0.2s; }
+        .btn:active { background: #21262d; transform: scale(0.95); }
+        .btn small { display: block; font-size: 10px; color: var(--neon); margin-top: 5px; }
+
+        /* الجدول */
+        table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 10px; }
         th { color: var(--neon); padding: 8px; border-bottom: 2px solid #333; }
         td { padding: 8px; text-align: center; border-bottom: 1px solid #111; }
-        .sys-btn { flex: 1; padding: 12px; border-radius: 10px; background: #21262d; border: 1px solid var(--brd); color: #fff; cursor: pointer; }
+        .sys-btn { flex: 1; padding: 12px; border-radius: 10px; background: #21262d; border: 1px solid var(--brd); color: #fff; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="signal" class="signal-bar wait">أدخل البيانات لتحليل الموجة...</div>
+    <div id="signal" class="signal-bar wait">أدخل 5 نتائج لبدء الرادار...</div>
+
     <div id="livePicks" class="live-picks"></div>
+
+    <div class="group-box">
+        <div class="g-section">
+            <div class="g-label">OMNI 6 (3+3 - القناص)</div>
+            <div id="g6" class="g-icons"></div>
+        </div>
+        <div class="g-section">
+            <div class="g-label">ULTRA 5 (3+2 - متوازن)</div>
+            <div id="g5" class="g-icons"></div>
+        </div>
+        <div class="g-section" style="margin:0">
+            <div class="g-label">STABLE 4 (2+2 - أمان)</div>
+            <div id="g4" class="g-icons"></div>
+        </div>
+    </div>
+
     <div id="history" class="history"></div>
 
     <div class="grid">
-        <button class="btn" onclick="add('corn')">🌽<br><small id="abs-corn">0</small></button>
-        <button class="btn" onclick="add('tomato')">🍅<br><small id="abs-tomato">0</small></button>
-        <button class="btn" onclick="add('carrot')">🥕<br><small id="abs-carrot">0</small></button>
-        <button class="btn" onclick="add('pepper')">🌶️<br><small id="abs-pepper">0</small></button>
-        <button class="btn" onclick="add('shrimp')">🦐<br><small id="abs-shrimp">0</small></button>
-        <button class="btn" onclick="add('cow')">🐄<br><small id="abs-cow">0</small></button>
-        <button class="btn" onclick="add('fish')">🐟<br><small id="abs-fish">0</small></button>
-        <button class="btn" onclick="add('chicken')">🐔<br><small id="abs-chicken">0</small></button>
+        <button class="btn" onclick="add('corn')">🌽<small id="abs-corn">0</small></button>
+        <button class="btn" onclick="add('tomato')">🍅<small id="abs-tomato">0</small></button>
+        <button class="btn" onclick="add('carrot')">🥕<small id="abs-carrot">0</small></button>
+        <button class="btn" onclick="add('pepper')">🌶️<small id="abs-pepper">0</small></button>
+        <button class="btn" onclick="add('shrimp')">🦐<small id="abs-shrimp">0</small></button>
+        <button class="btn" onclick="add('cow')">🐄<small id="abs-cow">0</small></button>
+        <button class="btn" onclick="add('fish')">🐟<small id="abs-fish">0</small></button>
+        <button class="btn" onclick="add('chicken')">🐔<small id="abs-chicken">0</small></button>
     </div>
 
     <table>
-        <thead><tr><th>الرمز</th><th>الغياب</th><th>الاحتمال</th><th>حالة الرادار</th></tr></thead>
+        <thead><tr><th>الرمز</th><th>الغياب</th><th>القوة</th><th>حالة الرادار</th></tr></thead>
         <tbody id="stats"></tbody>
     </table>
 
     <div style="display:flex; gap:10px; margin-top:15px;">
         <button class="sys-btn" onclick="undo()">تراجع</button>
-        <button class="sys-btn" onclick="reset()" style="color:var(--red)">تصفير</button>
+        <button class="sys-btn" onclick="reset()" style="color:var(--red)">تصفير العقل</button>
     </div>
 </div>
 
@@ -61,32 +96,34 @@
     const meat = ["shrimp", "cow", "fish", "chicken"];
     const emojis = {corn:"🌽",tomato:"🍅",carrot:"🥕",pepper:"🌶️",shrimp:"🦐",cow:"🐄",fish:"🐟",chicken:"🐔"};
     
-    // إعدادات العلم والاحتمالات (ظهور في كل 100 دورة)
+    // ضبط احتمالات Monte Carlo (ظهور في كل 100 دورة)
     const statsConfig = {
         corn: {prob:16, mult:5}, tomato: {prob:16, mult:5}, 
         carrot: {prob:16, mult:5}, pepper: {prob:16, mult:5},
-        shrimp: {prob:12.5, mult:10}, // 10-15 في الـ 100
+        shrimp: {prob:12, mult:10}, // الجمبري 10-15%
         cow: {prob:8, mult:15}, 
-        fish: {prob:5, mult:25}, // 4-6 في الـ 100
-        chicken: {prob:2, mult:45} // 1-3 في الـ 100
+        fish: {prob:4.5, mult:25}, // السمكة 4-6%
+        chicken: {prob:2, mult:45} // الكتكوت 1-3%
     };
 
-    let db = JSON.parse(localStorage.getItem("v68_db_v2") || "[]");
+    let db = JSON.parse(localStorage.getItem("v68_final_db") || "[]");
 
     function add(f) { db.push(f); save(); }
     function undo() { db.pop(); save(); }
-    function reset() { if(confirm("Reset?")) { db = []; save(); } }
-    function save() { localStorage.setItem("v68_db_v2", JSON.stringify(db)); update(); }
+    function reset() { if(confirm("تصفير البيانات؟")) { db = []; save(); } }
+    function save() { localStorage.setItem("v68_final_db", JSON.stringify(db)); update(); }
 
     function update() {
         const len = db.length;
+        const signal = document.getElementById("signal");
         if(len === 0) return;
 
+        // تحديث شريط التاريخ
         let hHTML = ""; 
         for(let i=len-1; i>=Math.max(0, len-20); i--) hHTML += `<div class="h-node">${emojis[db[i]]}</div>`;
         document.getElementById("history").innerHTML = hHTML;
 
-        // --- 1. رادار الموجة (Wave Radar) ---
+        // تحليل الموجات (Wave Radar)
         const last12 = db.slice(-12);
         const redWave = last12.filter(x => vegRed.includes(x)).length / 12;
         const yellowWave = last12.filter(x => vegYellow.includes(x)).length / 12;
@@ -94,54 +131,59 @@
         let scores = {};
         let reasons = {};
 
-        // --- 2. محاكاة مونت كارلو والبروبابيليتي (Monte Carlo & Logic) ---
         [...vegRed, ...vegYellow, ...meat].forEach(f => {
-            let abs = (db.lastIndexOf(f) === -1) ? Math.min(len, 120) : len - 1 - db.lastIndexOf(f);
+            let abs = (db.lastIndexOf(f) === -1) ? Math.min(len, 150) : len - 1 - db.lastIndexOf(f);
             document.getElementById(`abs-${f}`).innerText = abs;
 
-            // المعادلة: (الغياب الحالي / الغياب المتوقع) * وزن الانقلاب
+            // محرك الاحتمالية التكيفي
             let expectedGap = 100 / statsConfig[f].prob;
             let gapRatio = abs / expectedGap;
-            
             let score = gapRatio * 100;
 
-            // كاشف الانقلاب (Inversion Detector)
-            if (vegYellow.includes(f) && redWave > 0.5) { score *= 2.5; reasons[f] = "انقلاب أصفر"; }
-            else if (vegRed.includes(f) && yellowWave > 0.5) { score *= 2.5; reasons[f] = "انقلاب أحمر"; }
-            else if (meat.includes(f) && (redWave > 0.6 || yellowWave > 0.6)) { score *= 2.0; reasons[f] = "انفجار لحوم"; }
-            else { reasons[f] = "مستقر"; }
+            // كاشف الانقلاب والجعفلة
+            if (vegYellow.includes(f) && redWave > 0.5) { score *= 2.8; reasons[f] = "RED WAVE 🚩"; }
+            else if (vegRed.includes(f) && yellowWave > 0.5) { score *= 2.8; reasons[f] = "YELLOW WAVE 🚩"; }
+            else if (meat.includes(f) && (redWave > 0.6 || yellowWave > 0.6)) { score *= 2.2; reasons[f] = "MEAT INVERT"; }
+            else { reasons[f] = "STABLE"; }
 
-            // لجم النوادر (Rare Sniping Control)
-            // الكتكوت مش هياخد سكور عالي إلا لو غاب أكتر من 60 دور
-            if (f === 'chicken' && abs < 60) score *= 0.3;
-            if (f === 'fish' && abs < 35) score *= 0.4;
+            // فرامل النوادر (Sniper Limits)
+            if (f === 'chicken' && abs < 65) score *= 0.2;
+            if (f === 'fish' && abs < 35) score *= 0.3;
 
             scores[f] = score;
         });
 
         let sorted = [...vegRed, ...vegYellow, ...meat].sort((a,b) => scores[b] - scores[a]);
-        
-        // --- 3. نظام الإشارة القناص (90% Accuracy Target) ---
-        const topScore = scores[sorted[0]];
-        const signal = document.getElementById("signal");
-        
-        if (topScore > 350 && len > 10) {
-            signal.innerText = "🔥 SHOOT: إشارة قوية للانقلاب";
+        const maxS = scores[sorted[0]];
+
+        // تحديث إشارة القناص
+        if (maxS > 350 && len > 8) {
+            signal.innerText = "🔥 SHOOT: فرصة نجاح 90%";
             signal.className = "signal-bar shoot";
         } else {
-            signal.innerText = "⌛ WAIT: الموجة غير مكتملة";
+            signal.innerText = "⌛ WAIT: الموجة قيد التجميع";
             signal.className = "signal-bar wait";
         }
 
-        // تحديث الكروت والجدول
+        // تحديث الكروت
         document.getElementById("livePicks").innerHTML = sorted.slice(0, 4).map(x => `
             <div class="p-card ${scores[x] > 300 ? 'hot' : ''}">
                 <span class="emoji">${emojis[x]}</span>
                 <span class="tag">${reasons[x]}</span>
-                <span class="perc">${Math.min(99, Math.round((scores[x]/topScore)*100))}%</span>
+                <span class="perc">${Math.min(99, Math.round((scores[x]/maxS)*100))}%</span>
             </div>
         `).join("");
 
+        // تحديث الأنظمة (6, 5, 4)
+        const d = (list) => list.map(x => emojis[x]).join(" ");
+        let sV = [...vegRed, ...vegYellow].sort((a,b) => scores[b] - scores[a]);
+        let sM = [...meat].sort((a,b) => scores[b] - scores[a]);
+
+        document.getElementById("g6").innerText = d([...sV.slice(0,3), ...sM.slice(0,3)]);
+        document.getElementById("g5").innerText = d([...sV.slice(0,3), ...sM.slice(0,2)]);
+        document.getElementById("g4").innerText = d([...sV.slice(0,2), ...sM.slice(0,2)]);
+
+        // تحديث الجدول
         document.getElementById("stats").innerHTML = sorted.map(f => `
             <tr><td>${emojis[f]}</td><td>${document.getElementById(`abs-${f}`).innerText}</td>
             <td>${Math.round(scores[f])}</td><td style="color:var(--neon)">${reasons[f]}</td></tr>
