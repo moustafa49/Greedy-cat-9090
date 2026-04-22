@@ -3,36 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V600 MASTER - RADAR & MONTE CARLO</title>
+    <title>V700 MASTER - RADAR AI</title>
     <style>
         :root { --bg: #050505; --panel: #0d1117; --brd: #30363d; --neon: #00f2ff; --gold: #ffd700; --red: #ff4d4d; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 10px; }
-        .container { max-width: 480px; margin: auto; border: 1px solid var(--brd); border-radius: 20px; padding: 15px; background: var(--panel); }
-        .status-bar { text-align: center; padding: 12px; border-radius: 12px; font-weight: bold; border: 1px solid var(--neon); margin-bottom: 15px; }
-        .systems-box { border: 1.5px solid var(--gold); border-radius: 15px; padding: 15px; background: #000; margin-bottom: 20px; }
-        .sys-label { font-size: 11px; color: var(--gold); text-align: center; font-weight: bold; }
-        .sys-icons { font-size: 30px; letter-spacing: 12px; text-align: center; border-bottom: 1px solid #222; padding-bottom: 8px; margin-bottom: 12px; }
-        .history { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding: 10px; background: #000; border-radius: 12px; flex-direction: row-reverse; }
-        .h-node { min-width: 40px; height: 40px; background: #161b22; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 1px solid #30363d; }
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .btn { background: #161b22; border: 1px solid var(--brd); border-radius: 12px; padding: 15px 0; color: #fff; cursor: pointer; font-size: 22px; }
-        .btn small { display: block; font-size: 11px; color: var(--neon); }
-        .stats-table { width: 100%; margin-top: 20px; font-size: 11px; text-align: center; border-collapse: collapse; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 8px; }
+        .container { max-width: 480px; margin: auto; border: 1px solid var(--brd); border-radius: 20px; padding: 12px; background: var(--panel); }
+        .status-bar { text-align: center; padding: 10px; border-radius: 10px; font-weight: bold; border: 1px solid var(--neon); margin-bottom: 15px; color: var(--neon); font-size: 13px; }
+        .systems-box { border: 1.5px solid var(--gold); border-radius: 15px; padding: 12px; background: #000; margin-bottom: 15px; }
+        .sys-label { font-size: 10px; color: var(--gold); text-align: center; font-weight: bold; margin-bottom: 5px; }
+        .sys-icons { font-size: 26px; letter-spacing: 10px; text-align: center; border-bottom: 1px solid #222; padding-bottom: 6px; margin-bottom: 10px; min-height: 35px; }
+        .history { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 15px; padding: 8px; background: #000; border-radius: 10px; flex-direction: row-reverse; }
+        .h-node { min-width: 35px; height: 35px; background: #161b22; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid #30363d; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .btn { background: #161b22; border: 1px solid var(--brd); border-radius: 10px; padding: 12px 0; color: #fff; cursor: pointer; font-size: 20px; }
+        .btn small { display: block; font-size: 10px; color: var(--neon); }
+        .stats-table { width: 100%; margin-top: 15px; font-size: 11px; text-align: center; border-collapse: collapse; }
         .stats-table th { color: var(--gold); padding: 5px; border-bottom: 1px solid #333; }
-        .stats-table td { padding: 10px; border-bottom: 1px dotted #222; }
+        .stats-table td { padding: 8px; border-bottom: 1px dotted #222; }
+        .jafala-high { color: var(--red); font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="status" class="status-bar">🛰️ رادار مونت كارلو نشط</div>
+    <div id="status" class="status-bar">🛰️ رادار التكرار والجعفلة نشط</div>
 
     <div class="systems-box">
-        <div class="sys-label">OMNI 6 (تثبيت النشط + ذكاء التغطية)</div>
+        <div class="sys-label">OMNI 6 (3+3 - تثبيت الشريط)</div>
         <div id="g6" class="sys-icons">---</div>
-        <div class="sys-label">ULTRA 5 (توازن الجعفلة)</div>
+        <div class="sys-label">ULTRA 5 (3+2 - توازن التغير)</div>
         <div id="g5" class="sys-icons">---</div>
-        <div class="sys-label">STABLE 4 (قناص الانقلاب)</div>
+        <div class="sys-label">STABLE 4 (2+2 - قناص الانقلاب)</div>
         <div id="g4" class="sys-icons">---</div>
     </div>
 
@@ -53,17 +54,17 @@
         <thead>
             <tr>
                 <th>الرمز</th>
-                <th>Monte Carlo</th>
-                <th>الرادار (Radar)</th>
-                <th>احتمال جعفلة</th>
+                <th>Monte</th>
+                <th>Radar</th>
+                <th>الجعفلة</th>
             </tr>
         </thead>
         <tbody id="radar-body"></tbody>
     </table>
 
     <div style="display:flex; gap:10px; margin-top:15px;">
-        <button onclick="undo()" style="flex:1; padding:10px; background:#222; color:#fff; border-radius:10px;">تراجع</button>
-        <button onclick="reset()" style="flex:1; padding:10px; background:#900; color:#fff; border-radius:10px;">تصفير</button>
+        <button onclick="undo()" style="flex:1; padding:10px; background:#222; color:#fff; border-radius:8px; border:none;">تراجع</button>
+        <button onclick="reset()" style="flex:1; padding:10px; background:#600; color:#fff; border-radius:8px; border:none;">تصفير</button>
     </div>
 </div>
 
@@ -71,19 +72,19 @@
     const emojis = {corn:"🌽", tomato:"🍅", carrot:"🥕", pepper:"🌶️", shrimp:"🦐", cow:"🐄", fish:"🐟", chicken:"🐔"};
     const config = {corn:16, tomato:16, carrot:16, pepper:16, shrimp:12, cow:8, fish:5, chicken:2.5};
     const veggies = ['corn', 'tomato', 'carrot', 'pepper'], meats = ['shrimp', 'cow', 'fish', 'chicken'];
-    let db = JSON.parse(localStorage.getItem("v600_db") || "[]");
+    let db = JSON.parse(localStorage.getItem("v700_db") || "[]");
 
     function add(f) { db.push(f); save(); }
     function undo() { db.pop(); save(); }
-    function reset() { db = []; save(); }
-    function save() { localStorage.setItem("v600_db", JSON.stringify(db)); update(); }
+    function reset() { if(confirm("تصفير؟")) { db = []; save(); } }
+    function save() { localStorage.setItem("v700_db", JSON.stringify(db)); update(); }
 
     function update() {
         const len = db.length;
         if (len === 0) return;
         document.getElementById("history").innerHTML = db.slice(-20).map(x => `<div class="h-node">${emojis[x]}</div>`).join("");
 
-        const recent = db.slice(-5);
+        const recent = db.slice(-4); // تثبيت آخر 4 حركات
         let scores = {}, tableHTML = "";
 
         Object.keys(config).forEach(f => {
@@ -91,21 +92,26 @@
             let abs = (lastIdx === -1) ? Math.min(len, 100) : (len - 1 - lastIdx);
             document.getElementById(`abs-${f}`).innerText = abs;
 
-            // محرك مونت كارلو الحسابي
-            let mcScore = Math.round((abs * 10) / (100 / config[f]));
-            let score = mcScore;
+            // محرك مونت كارلو (MC)
+            let mc = Math.round((abs * 10) / (100 / config[f]));
+            let score = mc;
 
-            // قانون المغناطيس للتثبيت
-            if (recent.includes(f)) score += 50000;
-            if (f === db[len-1]) score += 20000;
+            // نظام "القفل المغناطيسي" - لو في الشريط، ياخد 100 ألف نقطة فوراً
+            if (recent.includes(f)) score += 100000;
+            if (f === db[len-1]) score += 50000;
 
             scores[f] = score;
 
-            // الرادار احتمالية الجعفلة
-            let jafala = Math.min(100, Math.round((abs / (100/config[f])) * 5));
-            let radarStatus = abs > 20 ? "🔴 خطر" : (abs > 10 ? "🟡 ترقب" : "🟢 آمن");
+            // حساب الجعفلة (احتمال الانقلاب)
+            let jafala = Math.min(100, Math.round((abs / (100/config[f])) * 8));
+            let radar = recent.includes(f) ? "🟢 تكرار" : (jafala > 60 ? "🔴 جعفلة" : "⚪ تحليل");
 
-            tableHTML += `<tr><td>${emojis[f]}</td><td>${mcScore}</td><td>${radarStatus}</td><td>${jafala}%</td></tr>`;
+            tableHTML += `<tr>
+                <td>${emojis[f]}</td>
+                <td>${mc}</td>
+                <td>${radar}</td>
+                <td class="${jafala > 70 ? 'jafala-high' : ''}">${jafala}%</td>
+            </tr>`;
         });
 
         document.getElementById("radar-body").innerHTML = tableHTML;
@@ -114,7 +120,7 @@
         let sM = meats.sort((a,b) => scores[b] - scores[a]);
         const d = (v, m) => v.concat(m).map(x => emojis[x]).join("");
 
-        document.getElementById("g6").innerText = d(sV.slice(0,3), sM.slice(0,3)); //
+        document.getElementById("g6").innerText = d(sV.slice(0,3), sM.slice(0,3));
         document.getElementById("g5").innerText = d(sV.slice(0,3), sM.slice(0,2));
         document.getElementById("g4").innerText = d(sV.slice(0,2), sM.slice(0,2));
     }
