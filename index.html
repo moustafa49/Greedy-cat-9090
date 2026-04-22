@@ -3,53 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V800 ULTIMATE - SMART RADAR</title>
+    <title>V900 GOLDEN - OLED RADAR</title>
     <style>
-        :root { --bg: #050505; --panel: #0d1117; --brd: #30363d; --neon: #00f2ff; --gold: #ffd700; --red: #ff4d4d; --blue: #007bff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 8px; }
-        .container { max-width: 480px; margin: auto; border: 1px solid var(--brd); border-radius: 20px; padding: 12px; background: var(--panel); }
+        :root { --bg: #000000; --panel: #0a0a0a; --brd: #1a1a1a; --neon: #00f2ff; --gold: #ffd700; --red: #ff3131; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 10px; }
+        .container { max-width: 450px; margin: auto; border: 1px solid var(--brd); border-radius: 25px; padding: 15px; background: var(--panel); box-shadow: 0 0 20px rgba(0,242,255,0.05); }
         
-        /* 1. مؤشر حالة الماكينة */
-        .machine-state { height: 6px; border-radius: 3px; margin-bottom: 10px; background: #222; overflow: hidden; }
-        .state-fill { height: 100%; width: 50%; transition: 0.5s; }
+        /* الهدف القادم */
+        .primary-target { background: linear-gradient(45deg, #1a1a1a, #000); border: 2px solid var(--gold); border-radius: 15px; padding: 15px; text-align: center; margin-bottom: 15px; box-shadow: 0 0 15px rgba(255,215,0,0.2); }
+        .target-icon { font-size: 45px; display: block; filter: drop-shadow(0 0 10px var(--gold)); }
+        .target-label { font-size: 12px; color: var(--gold); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
 
-        .status-bar { text-align: center; padding: 10px; border-radius: 10px; font-weight: bold; border: 1px solid var(--neon); margin-bottom: 15px; font-size: 13px; }
-        .systems-box { border: 1.5px solid var(--gold); border-radius: 15px; padding: 12px; background: #000; margin-bottom: 15px; position: relative; }
-        .sys-label { font-size: 10px; color: var(--gold); text-align: center; font-weight: bold; margin-bottom: 5px; }
-        .sys-icons { font-size: 26px; letter-spacing: 10px; text-align: center; border-bottom: 1px solid #222; padding-bottom: 6px; margin-bottom: 10px; min-height: 35px; }
+        .systems-box { border: 1px solid #333; border-radius: 15px; padding: 12px; background: #050505; margin-bottom: 15px; }
+        .sys-icons { font-size: 28px; letter-spacing: 10px; text-align: center; padding: 10px 0; min-height: 40px; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
         
-        .history { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 15px; padding: 8px; background: #000; border-radius: 10px; flex-direction: row-reverse; }
-        .h-node { min-width: 35px; height: 35px; background: #161b22; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid #30363d; }
-        
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .btn { background: #161b22; border: 1px solid var(--brd); border-radius: 10px; padding: 12px 0; color: #fff; cursor: pointer; font-size: 20px; }
-        .btn small { display: block; font-size: 10px; color: var(--neon); }
+        .history { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 15px; padding: 10px; background: #050505; border-radius: 12px; flex-direction: row-reverse; border: 1px solid #111; }
+        .h-node { min-width: 38px; height: 38px; background: #0a0a0a; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 1px solid #222; }
 
-        .stats-table { width: 100%; margin-top: 15px; font-size: 11px; text-align: center; border-collapse: collapse; }
-        .stats-table th { color: var(--gold); padding: 5px; border-bottom: 1px solid #333; }
-        .stats-table td { padding: 8px; border-bottom: 1px dotted #222; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .btn { background: #0a0a0a; border: 1px solid #222; border-radius: 12px; padding: 15px 0; color: #fff; cursor: pointer; font-size: 24px; transition: 0.1s; }
+        .btn:active { transform: scale(0.9); background: #1a1a1a; }
+        .btn small { display: block; font-size: 10px; color: var(--neon); margin-top: 5px; }
 
-        /* 2. نبض الجعفلة */
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; color: var(--red); } 100% { opacity: 1; } }
-        .jafala-alert { animation: pulse 1s infinite; font-weight: bold; color: var(--red); }
-        
-        .footer-btns { display: flex; gap: 8px; margin-top: 15px; }
-        .f-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; background: #21262d; color: #fff; }
+        .stats-table { width: 100%; margin-top: 20px; font-size: 11px; text-align: center; border-collapse: collapse; }
+        .stats-table th { color: #555; padding: 8px; border-bottom: 1px solid #222; }
+        .stats-table td { padding: 10px; border-bottom: 1px solid #111; }
+
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.2; transform: scale(1.1); } 100% { opacity: 1; } }
+        .glow-red { color: var(--red); animation: blink 0.8s infinite; font-weight: bold; }
+        .glow-green { color: #00ff00; text-shadow: 0 0 8px #00ff00; }
+
+        .footer { display: flex; gap: 10px; margin-top: 15px; }
+        .f-btn { flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; background: #111; color: #777; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="machine-state"><div id="state-bar" class="state-fill"></div></div>
-    <div id="status" class="status-bar">🛰️ رادار الحالة نشط</div>
+    <div class="primary-target">
+        <span class="target-label">🎯 الهدف القادم (PRIMARY TARGET)</span>
+        <span id="target-emoji" class="target-icon">❓</span>
+    </div>
 
     <div class="systems-box">
-        <div class="sys-label">OMNI 6 (تثبيت ملوك الشريط + 3 رادار)</div>
         <div id="g6" class="sys-icons">---</div>
-        <div class="sys-label">ULTRA 5 (ملاحقة التكرار)</div>
-        <div id="g5" class="sys-icons">---</div>
-        <div class="sys-label">STABLE 4 (قناص الانقلاب)</div>
-        <div id="g4" class="sys-icons">---</div>
+        <div id="g4" class="sys-icons" style="font-size: 22px; opacity: 0.6; border: none;">---</div>
     </div>
 
     <div id="history" class="history"></div>
@@ -69,17 +67,17 @@
         <thead>
             <tr>
                 <th>الرمز</th>
-                <th>Monte</th>
-                <th>Radar</th>
-                <th>جعفلة %</th>
+                <th>MONTE</th>
+                <th>RADAR</th>
+                <th>الجعفلة</th>
             </tr>
         </thead>
         <tbody id="radar-body"></tbody>
     </table>
 
-    <div class="footer-btns">
+    <div class="footer">
         <button onclick="undo()" class="f-btn">تراجع ↩️</button>
-        <button onclick="reset()" class="f-btn" style="background:#600;">تصفير 🗑️</button>
+        <button onclick="reset()" class="f-btn" style="color: #500;">تصفير</button>
     </div>
 </div>
 
@@ -87,20 +85,37 @@
     const emojis = {corn:"🌽", tomato:"🍅", carrot:"🥕", pepper:"🌶️", shrimp:"🦐", cow:"🐄", fish:"🐟", chicken:"🐔"};
     const config = {corn:16, tomato:16, carrot:16, pepper:16, shrimp:12, cow:8, fish:5, chicken:2.5};
     const veggies = ['corn', 'tomato', 'carrot', 'pepper'], meats = ['shrimp', 'cow', 'fish', 'chicken'];
-    let db = JSON.parse(localStorage.getItem("v800_db") || "[]");
+    let db = JSON.parse(localStorage.getItem("v900_db") || "[]");
 
-    function add(f) { db.push(f); save(); }
+    // 1. نظام الصوت [Audio Feedback]
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function beep(freq, duration) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.frequency.value = freq; gain.gain.value = 0.1;
+        osc.start(); setTimeout(() => osc.stop(), duration);
+    }
+
+    function add(f) { 
+        db.push(f); 
+        beep(600, 50); // صوت إضافة صنف
+        save(); 
+    }
+    
     function undo() { db.pop(); save(); }
-    function reset() { if(confirm("تصفير؟")) { db = []; save(); } }
-    function save() { localStorage.setItem("v800_db", JSON.stringify(db)); update(); }
+    function reset() { if(confirm("تصفير البيانات؟")) { db = []; save(); } }
+    function save() { localStorage.setItem("v900_db", JSON.stringify(db)); update(); }
 
     function update() {
         const len = db.length;
         if (len === 0) return;
+
         document.getElementById("history").innerHTML = db.slice(-20).map(x => `<div class="h-node">${emojis[x]}</div>`).join("");
 
-        const recent = db.slice(-5); // ملوك الشريط
+        const recent = db.slice(-5);
         let scores = {}, tableHTML = "";
+        let maxJafala = -1, bestTarget = "";
 
         Object.keys(config).forEach(f => {
             let lastIdx = db.lastIndexOf(f);
@@ -110,50 +125,39 @@
             let mc = Math.round((abs * 10) / (100 / config[f]));
             let score = mc;
 
-            // 3. قفل ملوك الشريط
+            // القفل المغناطيسي لملوك الشريط
             if (recent.includes(f)) score += 100000;
             if (f === db[len-1]) score += 50000;
-
             scores[f] = score;
 
+            // حساب الجعفلة
             let jafala = Math.min(100, Math.round((abs / (100/config[f])) * 8));
-            let isHot = jafala > 80;
-            let radar = recent.includes(f) ? "🟢 تكرار" : (isHot ? "🔴 جعفلة" : "⚪ تحليل");
+            if (jafala > maxJafala) { maxJafala = jafala; bestTarget = f; }
+            
+            let isJafala = jafala > 80;
+            if (isJafala) beep(800, 100); // تنبيه صوتي للجعفلة
+
+            let radar = recent.includes(f) ? "<span class='glow-green'>تكرار</span>" : (isJafala ? "<span class='glow-red'>خطر</span>" : "تحليل");
 
             tableHTML += `<tr>
                 <td>${emojis[f]}</td>
                 <td>${mc}</td>
                 <td>${radar}</td>
-                <td class="${isHot ? 'jafala-alert' : ''}">${jafala}%</td>
+                <td class="${isJafala ? 'glow-red' : ''}">${jafala}%</td>
             </tr>`;
         });
 
         document.getElementById("radar-body").innerHTML = tableHTML;
-
-        // 4. تحديث مؤشر الحالة
-        const stateBar = document.getElementById("state-bar");
-        const statusTxt = document.getElementById("status");
-        const uniqueRecent = [...new Set(recent)].length;
-
-        if (uniqueRecent <= 2) {
-            stateBar.style.width = "100%"; stateBar.style.background = "var(--blue)";
-            statusTxt.innerText = "🟦 حالة تكرار (ملوك الشريط مسيطرين)";
-        } else if (uniqueRecent <= 4) {
-            stateBar.style.width = "60%"; stateBar.style.background = "var(--gold)";
-            statusTxt.innerText = "🟨 حالة ترقب (احتمال تغير النمط)";
-        } else {
-            stateBar.style.width = "30%"; stateBar.style.background = "var(--red)";
-            statusTxt.innerText = "🟥 حالة جعفلة (توقع خروج صنف نادر)";
-        }
+        document.getElementById("target-emoji").innerText = emojis[bestTarget];
 
         let sV = veggies.sort((a,b) => scores[b] - scores[a]);
         let sM = meats.sort((a,b) => scores[b] - scores[a]);
         const d = (v, m) => v.concat(m).map(x => emojis[x]).join("");
 
         document.getElementById("g6").innerText = d(sV.slice(0,3), sM.slice(0,3));
-        document.getElementById("g5").innerText = d(sV.slice(0,3), sM.slice(0,2));
-        document.getElementById("g4").innerText = d(sV.slice(0,2), sM.slice(0,2));
+        document.getElementById("g4").innerText = "STABLE: " + d(sV.slice(0,2), sM.slice(0,2));
     }
+
     window.onload = update;
 </script>
 </body>
