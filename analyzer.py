@@ -1,48 +1,43 @@
 import json
-from collections import Counter
+import os
 
 class GreedyCatAnalyzer:
-    def __init__(self):
-        # تعريف الأصناف وقيمها
-        self.data = {
-            "خضار": ["طماطم", "جزر", "فلفل", "درة"],
-            "لحوم": {"جمبري": 10, "جموسة": 15, "سمكة": 25, "كتكوت": 45}
-        }
-        self.history = []
+    def __init__(self, filename="history.json"):
+        self.filename = filename
+        self.history = self._load_data()
+
+    def _load_data(self):
+        # بيقرأ البيانات القديمة لو موجودة
+        if os.path.exists(self.filename):
+            with open(self.filename, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        return []
+
+    def save_data(self):
+        # بيحفظ الأدوار الجديدة في الملف
+        with open(self.filename, 'w', encoding='utf-8') as f:
+            json.dump(self.history, f, ensure_ascii=False)
 
     def add_round(self, item):
         self.history.append(item)
+        self.save_data()
         self.analyze()
 
     def analyze(self):
         if len(self.history) < 5:
-            print("💡 محتاج بيانات أكتر.. سجل كمان.")
+            print("💡 محتاج بيانات أكتر (سجل 5 أدوار على الأقل)")
             return
 
         last_5 = self.history[-5:]
-        veg_count = sum(1 for x in last_5 if x in self.data["خضار"])
-        
-        print(f"\n--- تحليل الدور {len(self.history)} ---")
+        # حساب عدد مرات ظهور الخضار في آخر 5 أدوار
+        veg_items = ["طماطم", "جزر", "فلفل", "درة"]
+        veg_count = sum(1 for x in last_5 if x in veg_items)
+
+        print(f"\n--- تحليل الشريط ---")
         print(f"آخر الأدوار: {' ← '.join(last_5[::-1])}")
         
-        # منطق التوقع
         if veg_count >= 4:
-            print("🚨 حالة السيرفر: تبريد حاد (خضار كتير)")
-            print("🎯 التوقع: اللحمة قربت! ركز على الجمبري والجموسة.")
-        elif veg_count <= 1:
-            print("🔥 حالة السيرفر: تسخين (موجة لحوم)")
-            print("🎯 التوقع: كمل مع اللحمة أو أمن نفسك بـ (طماطم/فلفل).")
+            print("🚨 التوقع: السيرفر بارد.. ركز على الجمبري/الجموسة")
         else:
-            print("🛡️ حالة السيرفر: تذبذب (غير مستقر)")
-
-# --- تشغيل تجريبي ---
-bot = GreedyCatAnalyzer()
-
-# مثال لإضافة أدوار
-current_rounds = ["سمكة", "جزر", "جزر", "درة", "طماطم"]
-for r in current_rounds:
-    bot.add_round(r)
-
-# إضافة دور جديد يدوي
-# bot.add_round("فلفل")
-
+            print("🛡️ التوقع: تأمين خضار (فلفل/طماطم)")
+            
