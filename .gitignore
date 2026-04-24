@@ -1,14 +1,19 @@
-from analyzer import GreedyCatAnalyzer
-import os
+# Python files
+__pycache__/
+*.py[cod]
+*$py.class
 
-def main():
-    print("--- Greedy Cat 9090 System Initializing ---")
-    bot = GreedyCatAnalyzer()
-    
-    # محاكاة بسيطة للتحقق من أن النظام يعمل
-    print("System Check: Active ✅")
-    print("Ready to analyze patterns and distances.")
+# Environments
+.venv/
+venv/
+ENV/
+env/
 
-if __name__ == "__main__":
-    # هذا السطر يضمن تشغيل الكود الأساسي عند تشغيل الملف مباشرة
-    main()
+# Data & Logs
+*.log
+v7_unlocked_db
+.DS_Store
+
+# Static analysis
+.mypy_cache/
+.pytest_cache/
