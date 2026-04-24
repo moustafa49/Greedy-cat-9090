@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V1000 - PATTERN MASTER (3+3, 3+2, 2+2)</title>
+    <title>V1000 - HOT STREAK ENGINE</title>
     <style>
         :root { --bg: #000; --panel: #0d0d0d; --gold: #ffd700; --neon: #00f2ff; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 5px; }
@@ -12,8 +12,6 @@
         .pick-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #1a1a1a; padding-bottom: 5px; }
         .pick-label { font-size: 11px; color: var(--gold); font-weight: bold; width: 60px; }
         .pick-emojis { display: flex; gap: 8px; font-size: 22px; flex-grow: 1; justify-content: center; }
-        .target-box { background: radial-gradient(circle, #1a1a1a, #000); border: 2px solid var(--gold); border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 10px; }
-        .target-emoji { font-size: 60px; display: block; filter: drop-shadow(0 0 15px var(--gold)); }
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .btn { background: #111; border: 1px solid #222; border-radius: 12px; padding: 15px 0; color: #fff; position: relative; overflow: hidden; }
         .btn span { font-size: 26px; position: relative; z-index: 2; }
@@ -24,7 +22,7 @@
 <body>
 
 <div class="container">
-    <div style="text-align:center; font-size:10px; color:var(--neon); margin-bottom:10px;">نمط التشغيل المعتمد: 3+3 | 3+2 | 2+2</div>
+    <div style="text-align:center; font-size:10px; color:var(--neon); margin-bottom:10px;">النمط الذكي: (3+3 | 3+2 | 2+2) مع دعم التكرار</div>
 
     <div class="picks-container">
         <div class="pick-row"><span class="pick-label">6 PICKS</span><div id="picks-6" class="pick-emojis"></div></div>
@@ -32,12 +30,7 @@
         <div class="pick-row"><span class="pick-label">4 PICKS</span><div id="picks-4" class="pick-emojis"></div></div>
     </div>
 
-    <div class="target-box">
-        <div id="target-emoji" class="target-emoji">❓</div>
-        <div style="font-size: 10px; color: var(--gold); font-weight: bold;">الهدف الرئيسي</div>
-    </div>
-
-    <div id="history" style="display:flex; gap:5px; overflow-x:auto; margin-bottom:10px; padding:8px; background:#050505; border-radius:12px; flex-direction:row-reverse;"></div>
+    <div id="history" style="display:flex; gap:5px; overflow-x:auto; margin-bottom:10px; padding:8px; background:#050505; border-radius:12px; flex-direction:row-reverse; min-height:45px;"></div>
 
     <div class="grid">
         <button class="btn" onclick="add('corn')"><span>🌽</span><div id="bar-corn" class="charge-bar"></div></button>
@@ -51,7 +44,7 @@
     </div>
 
     <table class="stats-table">
-        <thead><tr><th>الصنف</th><th>الضرب</th><th>ظهر/سقف</th><th>السكور</th></tr></thead>
+        <thead><tr><th>الصنف</th><th>الضرب</th><th>100/سقف</th><th>السكور</th></tr></thead>
         <tbody id="radar-body"></tbody>
     </table>
 
@@ -68,12 +61,12 @@
     const veggies = ['corn', 'tomato', 'carrot', 'pepper'];
     const meats = ['shrimp', 'cow', 'fish', 'chicken'];
     
-    let db = JSON.parse(localStorage.getItem("v1000_pattern_db") || "[]");
+    let db = JSON.parse(localStorage.getItem("v1000_streak_db") || "[]");
 
     function add(f) { db.push(f); save(); }
     function undo() { db.pop(); save(); }
-    function reset() { if(confirm("تصفير؟")) { db = []; save(); } }
-    function save() { localStorage.setItem("v1000_pattern_db", JSON.stringify(db)); update(); }
+    function reset() { if(confirm("RESET?")) { db = []; save(); } }
+    function save() { localStorage.setItem("v1000_streak_db", JSON.stringify(db)); update(); }
 
     function update() {
         const len = db.length;
@@ -83,38 +76,30 @@
         let last100 = db.slice(-100);
         let scores = {};
 
-        // 1. حساب السكور الأساسي لكل صنف
         Object.keys(emojis).forEach(f => {
             let lastIdx = db.lastIndexOf(f);
             let abs = (lastIdx === -1) ? 100 : (len - 1 - lastIdx);
             let countIn100 = last100.filter(x => x === f).length;
             
-            let score = abs * (10 / mults[f]); // كل ما زاد الضرب قل السكور الأساسي
-            if (countIn100 >= caps[f]) score = -999; // نظام الحظر الصارم
-            
+            // سكور الغياب الأساسي
+            let score = abs * (15 / mults[f]);
+
+            // فلتر "الموجة": لو الصنف لسه جاي، اديله "بونص تكرار" بدل ما تصفره
+            if (abs === 0) score += 50; 
+            if (abs === 1) score += 30;
+
+            // حظر الندرة الصارم
+            if (countIn100 >= caps[f]) score = -999;
+
             scores[f] = score;
         });
 
-        // وظيفة لاختيار أفضل الأصناف من مجموعة معينة
-        const getBest = (list, count) => list.sort((a,b) => scores[b] - scores[a]).slice(0, count);
+        const getBest = (list, count) => [...list].sort((a,b) => scores[b] - scores[a]).slice(0, count);
 
-        // 2. تطبيق منهجية الـ Picks الإجبارية
-        // 6 Picks: (3 خضار + 3 لحوم)
-        let p6 = [...getBest([...veggies], 3), ...getBest([...meats], 3)];
-        
-        // 5 Picks: (3 خضار + 2 لحوم)
-        let p5 = [...getBest([...veggies], 3), ...getBest([...meats], 2)];
-        
-        // 4 Picks: (2 خضار + 2 لحوم)
-        let p4 = [...getBest([...veggies], 2), ...getBest([...meats], 2)];
-
-        // تحديث الواجهة
-        document.getElementById("picks-6").innerHTML = p6.map(x => emojis[x]).join("");
-        document.getElementById("picks-5").innerHTML = p5.map(x => emojis[x]).join("");
-        document.getElementById("picks-4").innerHTML = p4.map(x => emojis[x]).join("");
-        
-        let sortedAll = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
-        document.getElementById("target-emoji").innerText = emojis[sortedAll[0]];
+        // تطبيق الأنماط (إجبارية التنوع مع احترام الموجة)
+        document.getElementById("picks-6").innerHTML = [...getBest(veggies, 3), ...getBest(meats, 3)].map(x => emojis[x]).join("");
+        document.getElementById("picks-5").innerHTML = [...getBest(veggies, 3), ...getBest(meats, 2)].map(x => emojis[x]).join("");
+        document.getElementById("picks-4").innerHTML = [...getBest(veggies, 2), ...getBest(meats, 2)].map(x => emojis[x]).join("");
 
         let tableHTML = "";
         Object.keys(emojis).forEach(f => {
