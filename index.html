@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V1000 - ADVANCED AI LEARNING</title>
+    <title>V1000 - TREND SCANNER AI</title>
     <style>
-        :root { --bg: #000; --panel: #0d0d0d; --gold: #ffd700; --neon: #00f2ff; --red: #ff3131; }
+        :root { --bg: #000; --panel: #0d0d0d; --gold: #ffd700; --neon: #00f2ff; --red: #ff3131; --green: #00ff88; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 5px; }
         .container { max-width: 450px; margin: auto; border: 1px solid #222; border-radius: 20px; padding: 10px; background: var(--panel); }
         
-        /* قراءة الشريط (The Strip Reader) */
-        .strip-reader { background: #050505; border-radius: 12px; padding: 10px; margin-bottom: 10px; border: 1px solid #1a1a1a; }
-        .strip-label { font-size: 10px; color: var(--neon); margin-bottom: 5px; font-weight: bold; }
-        .history-flow { display: flex; gap: 4px; overflow-x: auto; flex-direction: row-reverse; padding-bottom: 5px; }
-        .h-node { min-width: 35px; height: 35px; background: #111; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid #222; }
+        /* كاشف التريند */
+        .trend-panel { background: #050505; border-radius: 12px; padding: 10px; margin-bottom: 10px; border: 1px solid #1a1a1a; display: flex; justify-content: space-between; align-items: center; }
+        .trend-info { font-size: 11px; color: var(--neon); }
+        .trend-badge { background: var(--red); color: #000; padding: 2px 8px; border-radius: 5px; font-weight: bold; font-size: 10px; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        .history-flow { display: flex; gap: 4px; overflow-x: auto; flex-direction: row-reverse; padding: 8px; background: #111; border-radius: 10px; margin-bottom: 10px; }
+        .h-node { min-width: 35px; height: 35px; background: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid #222; }
 
         .picks-container { background: #111; border-radius: 15px; padding: 12px; margin-bottom: 10px; border: 1px solid #222; }
         .pick-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #1a1a1a; padding-bottom: 5px; }
@@ -28,17 +31,19 @@
         .stats-table { width: 100%; margin-top: 15px; font-size: 11px; text-align: center; border-collapse: collapse; }
         .stats-table th { color: #444; padding-bottom: 10px; border-bottom: 1px solid #222; }
         .stats-table td { padding: 10px 0; border-bottom: 1px solid #0a0a0a; }
-        .absent-glow { color: var(--gold); text-shadow: 0 0 5px var(--gold); font-weight: bold; }
-        .dead-zone { opacity: 0.3; filter: grayscale(1); }
+        .trend-node { color: var(--green); font-weight: bold; }
+        .dead { opacity: 0.2; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="strip-reader">
-        <div class="strip-label">قراءة الشريط (آخر 20 جولة)</div>
-        <div id="history" class="history-flow"></div>
+    <div class="trend-panel">
+        <div class="trend-info">حالة الشريط: <span id="trend-status">مستقر</span></div>
+        <div id="trend-alert" style="display:none;" class="trend-badge">TREND DETECTED!</div>
     </div>
+
+    <div id="history" class="history-flow"></div>
 
     <div class="picks-container">
         <div class="pick-row"><span class="pick-label">6 PICKS</span><div id="picks-6" class="pick-emojis"></div></div>
@@ -58,13 +63,13 @@
     </div>
 
     <table class="stats-table">
-        <thead><tr><th>الصنف</th><th>الضرب</th><th>الغياب</th><th>100/سقف</th><th>الاحتمال</th></tr></thead>
+        <thead><tr><th>الصنف</th><th>الضرب</th><th>الغياب</th><th>الشريط</th><th>سكور</th></tr></thead>
         <tbody id="radar-body"></tbody>
     </table>
 
     <div style="display:flex; gap:8px; margin-top:15px;">
-        <button onclick="undo()" style="flex:1; padding:12px; background:#111; color:#555; border:none; border-radius:10px;">تراجع</button>
-        <button onclick="reset()" style="flex:1; padding:12px; background:#300; color:#888; border:none; border-radius:10px;">تصفير</button>
+        <button onclick="undo()" style="flex:1; padding:12px; background:#111; color:#555; border:none; border-radius:10px;">UNDO</button>
+        <button onclick="reset()" style="flex:1; padding:12px; background:#300; color:#888; border:none; border-radius:10px;">RESET</button>
     </div>
 </div>
 
@@ -75,12 +80,12 @@
     const veggies = ['corn', 'tomato', 'carrot', 'pepper'];
     const meats = ['shrimp', 'cow', 'fish', 'chicken'];
     
-    let db = JSON.parse(localStorage.getItem("v1000_adv_db") || "[]");
+    let db = JSON.parse(localStorage.getItem("v1000_trend_db") || "[]");
 
     function add(f) { db.push(f); save(); }
     function undo() { db.pop(); save(); }
-    function reset() { if(confirm("تصفير الشريط بالكامل؟")) { db = []; save(); } }
-    function save() { localStorage.setItem("v1000_adv_db", JSON.stringify(db)); update(); }
+    function reset() { if(confirm("تصفير الشريط؟")) { db = []; save(); } }
+    function save() { localStorage.setItem("v1000_trend_db", JSON.stringify(db)); update(); }
 
     function update() {
         const len = db.length;
@@ -88,46 +93,60 @@
         if (len === 0) return;
 
         let last100 = db.slice(-100);
+        let last10 = db.slice(-10);
         let scores = {};
-        let tableHTML = "";
+        let trendDetected = false;
+
+        // تحليل الـ Trend
+        let meatCount = last10.filter(x => meats.includes(x)).length;
+        document.getElementById("trend-status").innerText = meatCount >= 4 ? "Trend لحوم 🍖" : "Trend خضار 🥗";
+        document.getElementById("trend-status").style.color = meatCount >= 4 ? "#ff3131" : "#00ff88";
 
         Object.keys(emojis).forEach(f => {
             let lastIdx = db.lastIndexOf(f);
             let absent = (lastIdx === -1) ? len : (len - 1 - lastIdx);
             let count100 = last100.filter(x => x === f).length;
+            let countInLast6 = db.slice(-6).filter(x => x === f).length;
             
-            // سكور الغياب Advanced: الغياب مضروب في ثقل الصنف
+            // سكور الغياب
             let score = absent * (30 / mults[f]);
 
-            // بونص الموجة الحارة (لأن السيرفر بيكرر الأصناف)
-            if (absent === 0) score += 60; 
-            if (absent === 1) score += 35;
+            // منطق الـ Trend: لو الصنف ظهر مرتين أو أكتر في آخر 6 أدوار، ارفع سكره فوراً
+            if (countInLast6 >= 2) {
+                score += 150; 
+                trendDetected = true;
+            }
 
-            // نظام الاستبعاد الصارم (Dead Zone)
-            let isDead = (count100 >= caps[f]);
-            if (isDead) score = -1000;
+            // بونص الموجة الحارة
+            if (absent === 0) score += 60;
 
+            if (count100 >= caps[f]) score = -1000;
             scores[f] = score;
 
             let sPct = Math.min(100, Math.max(0, Math.round(score)));
             document.getElementById(`bar-${f}`).style.width = sPct + "%";
-            
-            tableHTML += `<tr class="${isDead?'dead-zone':''}">
-                <td>${emojis[f]}</td>
-                <td>x${mults[f]}</td>
-                <td class="${absent > 12 ? 'absent-glow' : ''}">${absent}</td>
-                <td>${count100}/${caps[f]}</td>
-                <td>${sPct}%</td>
-            </tr>`;
         });
+
+        document.getElementById("trend-alert").style.display = trendDetected ? "block" : "none";
 
         const getBest = (list, count) => [...list].sort((a,b) => scores[b] - scores[a]).slice(0, count);
 
-        // توزيع الأنماط الذكية (3+3 | 3+2 | 2+2)
+        // توزيع الأنماط 3+3 و 2+2
         document.getElementById("picks-6").innerHTML = [...getBest(veggies, 3), ...getBest(meats, 3)].map(x => emojis[x]).join("");
         document.getElementById("picks-5").innerHTML = [...getBest(veggies, 3), ...getBest(meats, 2)].map(x => emojis[x]).join("");
         document.getElementById("picks-4").innerHTML = [...getBest(veggies, 2), ...getBest(meats, 2)].map(x => emojis[x]).join("");
-        
+
+        let tableHTML = "";
+        Object.keys(emojis).forEach(f => {
+            let count6 = db.slice(-6).filter(x => x === f).length;
+            tableHTML += `<tr class="${scores[f] < 0 ? 'dead':''}">
+                <td>${emojis[f]}</td>
+                <td>x${mults[f]}</td>
+                <td>${len - 1 - db.lastIndexOf(f)}</td>
+                <td class="${count6 >= 2 ? 'trend-node':''}">${count6}x (6d)</td>
+                <td>${Math.min(100, Math.max(0, Math.round(scores[f])))}%</td>
+            </tr>`;
+        });
         document.getElementById("radar-body").innerHTML = tableHTML;
     }
     window.onload = update;
