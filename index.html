@@ -3,34 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V1000 - HOT STREAK ENGINE</title>
+    <title>V1000 - ADVANCED AI LEARNING</title>
     <style>
-        :root { --bg: #000; --panel: #0d0d0d; --gold: #ffd700; --neon: #00f2ff; }
+        :root { --bg: #000; --panel: #0d0d0d; --gold: #ffd700; --neon: #00f2ff; --red: #ff3131; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 5px; }
         .container { max-width: 450px; margin: auto; border: 1px solid #222; border-radius: 20px; padding: 10px; background: var(--panel); }
+        
+        /* قراءة الشريط (The Strip Reader) */
+        .strip-reader { background: #050505; border-radius: 12px; padding: 10px; margin-bottom: 10px; border: 1px solid #1a1a1a; }
+        .strip-label { font-size: 10px; color: var(--neon); margin-bottom: 5px; font-weight: bold; }
+        .history-flow { display: flex; gap: 4px; overflow-x: auto; flex-direction: row-reverse; padding-bottom: 5px; }
+        .h-node { min-width: 35px; height: 35px; background: #111; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid #222; }
+
         .picks-container { background: #111; border-radius: 15px; padding: 12px; margin-bottom: 10px; border: 1px solid #222; }
         .pick-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #1a1a1a; padding-bottom: 5px; }
         .pick-label { font-size: 11px; color: var(--gold); font-weight: bold; width: 60px; }
-        .pick-emojis { display: flex; gap: 8px; font-size: 22px; flex-grow: 1; justify-content: center; }
+        .pick-emojis { display: flex; gap: 8px; font-size: 24px; flex-grow: 1; justify-content: center; }
+
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .btn { background: #111; border: 1px solid #222; border-radius: 12px; padding: 15px 0; color: #fff; position: relative; overflow: hidden; }
-        .btn span { font-size: 26px; position: relative; z-index: 2; }
+        .btn span { font-size: 28px; position: relative; z-index: 2; }
         .charge-bar { position: absolute; bottom: 0; left: 0; height: 4px; background: var(--gold); transition: width 0.3s; z-index: 1; }
-        .stats-table { width: 100%; margin-top: 15px; font-size: 10px; text-align: center; color: #555; }
+
+        .stats-table { width: 100%; margin-top: 15px; font-size: 11px; text-align: center; border-collapse: collapse; }
+        .stats-table th { color: #444; padding-bottom: 10px; border-bottom: 1px solid #222; }
+        .stats-table td { padding: 10px 0; border-bottom: 1px solid #0a0a0a; }
+        .absent-glow { color: var(--gold); text-shadow: 0 0 5px var(--gold); font-weight: bold; }
+        .dead-zone { opacity: 0.3; filter: grayscale(1); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div style="text-align:center; font-size:10px; color:var(--neon); margin-bottom:10px;">النمط الذكي: (3+3 | 3+2 | 2+2) مع دعم التكرار</div>
+    <div class="strip-reader">
+        <div class="strip-label">قراءة الشريط (آخر 20 جولة)</div>
+        <div id="history" class="history-flow"></div>
+    </div>
 
     <div class="picks-container">
         <div class="pick-row"><span class="pick-label">6 PICKS</span><div id="picks-6" class="pick-emojis"></div></div>
         <div class="pick-row"><span class="pick-label">5 PICKS</span><div id="picks-5" class="pick-emojis"></div></div>
         <div class="pick-row"><span class="pick-label">4 PICKS</span><div id="picks-4" class="pick-emojis"></div></div>
     </div>
-
-    <div id="history" style="display:flex; gap:5px; overflow-x:auto; margin-bottom:10px; padding:8px; background:#050505; border-radius:12px; flex-direction:row-reverse; min-height:45px;"></div>
 
     <div class="grid">
         <button class="btn" onclick="add('corn')"><span>🌽</span><div id="bar-corn" class="charge-bar"></div></button>
@@ -44,69 +58,76 @@
     </div>
 
     <table class="stats-table">
-        <thead><tr><th>الصنف</th><th>الضرب</th><th>100/سقف</th><th>السكور</th></tr></thead>
+        <thead><tr><th>الصنف</th><th>الضرب</th><th>الغياب</th><th>100/سقف</th><th>الاحتمال</th></tr></thead>
         <tbody id="radar-body"></tbody>
     </table>
 
     <div style="display:flex; gap:8px; margin-top:15px;">
-        <button onclick="undo()" style="flex:1; padding:12px; background:#111; color:#555; border:none; border-radius:10px;">UNDO</button>
-        <button onclick="reset()" style="flex:1; padding:12px; background:#300; color:#999; border:none; border-radius:10px;">RESET</button>
+        <button onclick="undo()" style="flex:1; padding:12px; background:#111; color:#555; border:none; border-radius:10px;">تراجع</button>
+        <button onclick="reset()" style="flex:1; padding:12px; background:#300; color:#888; border:none; border-radius:10px;">تصفير</button>
     </div>
 </div>
 
 <script>
     const emojis = {corn:"🌽", tomato:"🍅", carrot:"🥕", pepper:"🌶️", shrimp:"🦐", cow:"🐄", fish:"🐟", chicken:"🐔"};
-    const mults = {corn:5, tomato:5, carrot:5, pepper:5, shrimp:10, cow:25, fish:25, chicken:45};
+    const mults = {corn:5, tomato:5, carrot:5, pepper:5, shrimp:10, cow:15, fish:25, chicken:45};
     const caps = {corn:100, tomato:100, carrot:100, pepper:100, shrimp:15, cow:10, fish:6, chicken:2}; 
     const veggies = ['corn', 'tomato', 'carrot', 'pepper'];
     const meats = ['shrimp', 'cow', 'fish', 'chicken'];
     
-    let db = JSON.parse(localStorage.getItem("v1000_streak_db") || "[]");
+    let db = JSON.parse(localStorage.getItem("v1000_adv_db") || "[]");
 
     function add(f) { db.push(f); save(); }
     function undo() { db.pop(); save(); }
-    function reset() { if(confirm("RESET?")) { db = []; save(); } }
-    function save() { localStorage.setItem("v1000_streak_db", JSON.stringify(db)); update(); }
+    function reset() { if(confirm("تصفير الشريط بالكامل؟")) { db = []; save(); } }
+    function save() { localStorage.setItem("v1000_adv_db", JSON.stringify(db)); update(); }
 
     function update() {
         const len = db.length;
-        document.getElementById("history").innerHTML = db.slice(-20).map(x => `<div style="min-width:30px; height:30px; background:#111; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:16px; border:1px solid #222;">${emojis[x]}</div>`).join("");
+        document.getElementById("history").innerHTML = db.slice(-20).map(x => `<div class="h-node">${emojis[x]}</div>`).join("");
         if (len === 0) return;
 
         let last100 = db.slice(-100);
         let scores = {};
+        let tableHTML = "";
 
         Object.keys(emojis).forEach(f => {
             let lastIdx = db.lastIndexOf(f);
-            let abs = (lastIdx === -1) ? 100 : (len - 1 - lastIdx);
-            let countIn100 = last100.filter(x => x === f).length;
+            let absent = (lastIdx === -1) ? len : (len - 1 - lastIdx);
+            let count100 = last100.filter(x => x === f).length;
             
-            // سكور الغياب الأساسي
-            let score = abs * (15 / mults[f]);
+            // سكور الغياب Advanced: الغياب مضروب في ثقل الصنف
+            let score = absent * (30 / mults[f]);
 
-            // فلتر "الموجة": لو الصنف لسه جاي، اديله "بونص تكرار" بدل ما تصفره
-            if (abs === 0) score += 50; 
-            if (abs === 1) score += 30;
+            // بونص الموجة الحارة (لأن السيرفر بيكرر الأصناف)
+            if (absent === 0) score += 60; 
+            if (absent === 1) score += 35;
 
-            // حظر الندرة الصارم
-            if (countIn100 >= caps[f]) score = -999;
+            // نظام الاستبعاد الصارم (Dead Zone)
+            let isDead = (count100 >= caps[f]);
+            if (isDead) score = -1000;
 
             scores[f] = score;
+
+            let sPct = Math.min(100, Math.max(0, Math.round(score)));
+            document.getElementById(`bar-${f}`).style.width = sPct + "%";
+            
+            tableHTML += `<tr class="${isDead?'dead-zone':''}">
+                <td>${emojis[f]}</td>
+                <td>x${mults[f]}</td>
+                <td class="${absent > 12 ? 'absent-glow' : ''}">${absent}</td>
+                <td>${count100}/${caps[f]}</td>
+                <td>${sPct}%</td>
+            </tr>`;
         });
 
         const getBest = (list, count) => [...list].sort((a,b) => scores[b] - scores[a]).slice(0, count);
 
-        // تطبيق الأنماط (إجبارية التنوع مع احترام الموجة)
+        // توزيع الأنماط الذكية (3+3 | 3+2 | 2+2)
         document.getElementById("picks-6").innerHTML = [...getBest(veggies, 3), ...getBest(meats, 3)].map(x => emojis[x]).join("");
         document.getElementById("picks-5").innerHTML = [...getBest(veggies, 3), ...getBest(meats, 2)].map(x => emojis[x]).join("");
         document.getElementById("picks-4").innerHTML = [...getBest(veggies, 2), ...getBest(meats, 2)].map(x => emojis[x]).join("");
-
-        let tableHTML = "";
-        Object.keys(emojis).forEach(f => {
-            let sPct = Math.min(100, Math.max(0, Math.round(scores[f])));
-            document.getElementById(`bar-${f}`).style.width = sPct + "%";
-            tableHTML += `<tr><td>${emojis[f]}</td><td>x${mults[f]}</td><td>${last100.filter(x=>x===f).length}/${caps[f]}</td><td>${sPct}%</td></tr>`;
-        });
+        
         document.getElementById("radar-body").innerHTML = tableHTML;
     }
     window.onload = update;
