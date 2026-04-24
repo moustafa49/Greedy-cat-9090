@@ -3,65 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Greedy Cat 9090 - Analyzer</title>
+    <title>V7.0 UNLOCKED - ALL DATA</title>
     <style>
-        body { font-family: sans-serif; background: #121212; color: white; text-align: center; padding: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-        button { padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .veg { background: #4CAF50; color: white; } /* خضار */
-        .meat { background: #f44336; color: white; } /* لحوم */
-        #log { background: #1e1e1e; padding: 10px; border-radius: 8px; min-height: 50px; margin-top: 20px; }
-        .prediction { background: #ff9800; color: black; padding: 15px; margin: 20px 0; border-radius: 8px; font-size: 1.2em; }
+        :root { --bg: #000; --neon: #00ff41; --danger: #ff003c; --gold: #ffd700; --panel: #0d0d0d; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 5px; }
+        .main-container { max-width: 480px; margin: auto; border: 1px solid #333; border-radius: 20px; padding: 12px; background: var(--panel); }
+        .status-header { text-align: center; padding: 8px; border-bottom: 1px solid #222; margin-bottom: 10px; }
+        #warn-text { font-size: 15px; font-weight: bold; color: var(--neon); }
+        .strip-flow { display: flex; gap: 6px; overflow-x: auto; flex-direction: row-reverse; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #1a1a1a; min-height: 50px; }
+        .node { min-width: 40px; height: 40px; background: #000; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid #333; }
+        .all-picks { background: #000; border-radius: 15px; padding: 12px; margin-bottom: 15px; border: 1px solid #222; }
+        .row-p { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #111; padding-bottom: 5px; }
+        .label-p { font-size: 11px; color: var(--gold); font-weight: bold; width: 65px; }
+        .icons-p { display: flex; gap: 10px; font-size: 26px; }
+        .target-hero { background: radial-gradient(circle, #151515 0%, #000 100%); border: 1px solid #222; border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 15px; }
+        .target-hero b { font-size: 55px; display: block; filter: drop-shadow(0 0 10px var(--neon)); }
+        .input-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .btn-in { background: #000; border: 1px solid #333; border-radius: 15px; padding: 22px 0; position: relative; color: #fff; cursor: pointer; }
+        .btn-in span { font-size: 32px; z-index: 2; position: relative; }
+        .abs-tag { position: absolute; top: 3px; right: 6px; font-size: 10px; color: var(--neon); font-weight: bold; }
+        .full-stats { width: 100%; margin-top: 15px; font-size: 11px; text-align: center; border-collapse: collapse; }
+        .full-stats th { color: #444; border-bottom: 1px solid #222; padding-bottom: 8px; }
+        .full-stats td { padding: 10px 0; border-bottom: 1px solid #0a0a0a; }
     </style>
 </head>
 <body>
 
-    <h1>Greedy Cat 9090 🐱</h1>
-    
-    <div class="prediction" id="predict-box">التوقع: سجل 5 أدوار للبدء</div>
-
-    <div class="grid">
-        <button class="veg" onclick="addRound('طماطم')">طماطم 🍅</button>
-        <button class="veg" onclick="addRound('جزر')">جزر 🥕</button>
-        <button class="veg" onclick="addRound('فلفل')">فلفل 🌶️</button>
-        <button class="veg" onclick="addRound('درة')">درة 🌽</button>
-        
-        <button class="meat" onclick="addRound('جمبري')">جمبري x10</button>
-        <button class="meat" onclick="addRound('جموسة')">جموسة x15</button>
-        <button class="meat" onclick="addRound('سمكة')">سمكة x25</button>
-        <button class="meat" onclick="addRound('كتكوت')">كتكوت x45</button>
+<div class="main-container">
+    <div class="status-header"><div id="warn-text">SYSTEM INITIALIZING...</div></div>
+    <div class="strip-flow" id="history"></div>
+    <div class="target-hero"><span style="font-size: 10px; color: #555;">الهدف القادم</span><b id="main-target">?</b></div>
+    <div class="all-picks">
+        <div class="row-p"><span class="label-p">PICKS 6</span><div id="p6" class="icons-p"></div></div>
+        <div class="row-p"><span class="label-p">PICKS 5</span><div id="p5" class="icons-p"></div></div>
     </div>
+    <div class="input-grid">
+        <button class="btn-in" onclick="add('corn')"><div class="abs-tag" id="a-corn">0</div><span>🌽</span></button>
+        <button class="btn-in" onclick="add('tomato')"><div class="abs-tag" id="a-tomato">0</div><span>🍅</span></button>
+        <button class="btn-in" onclick="add('carrot')"><div class="abs-tag" id="a-carrot">0</div><span>🥕</span></button>
+        <button class="btn-in" onclick="add('pepper')"><div class="abs-tag" id="a-pepper">0</div><span>🌶️</span></button>
+        <button class="btn-in" onclick="add('shrimp')"><div class="abs-tag" id="a-shrimp">0</div><span>🦐</span></button>
+        <button class="btn-in" onclick="add('cow')"><div class="abs-tag" id="a-cow">0</div><span>🐄</span></button>
+        <button class="btn-in" onclick="add('fish')"><div class="abs-tag" id="a-fish">0</div><span>🐟</span></button>
+        <button class="btn-in" onclick="add('chicken')"><div class="abs-tag" id="a-chicken">0</div><span>🐔</span></button>
+    </div>
+    <table class="full-stats">
+        <thead><tr><th>الصنف</th><th>الضرب</th><th>الغياب</th><th>التريند</th></tr></thead>
+        <tbody id="stats-body"></tbody>
+    </table>
+    <div style="display:flex; gap:10px; margin-top:20px;">
+        <button onclick="undo()" style="flex:1; padding:15px; border-radius:12px; background:#111; color:#fff; border:none; cursor:pointer;">تراجع</button>
+        <button onclick="reset()" style="flex:1; padding:15px; border-radius:12px; background:#300; color:#fff; border:none; cursor:pointer;">مسح</button>
+    </div>
+</div>
 
-    <h3>آخر 5 أدوار:</h3>
-    <div id="log">لا توجد بيانات بعد</div>
+<script>
+    const emojis = {corn:"🌽", tomato:"🍅", carrot:"🥕", pepper:"🌶️", shrimp:"🦐", cow:"🐄", fish:"🐟", chicken:"🐔"};
+    const mults = {corn:5, tomato:5, carrot:5, pepper:5, shrimp:10, cow:15, fish:25, chicken:45};
+    
+    async function add(f) {
+        const res = await fetch(`/predict?item=${f}`);
+        const data = await res.json();
+        updateUI(data);
+    }
 
-    <script>
-        let history = [];
+    async function undo() { /* للتطوير اللاحق مع السيرفر */ }
 
-        function addRound(item) {
-            history.push(item);
-            if (history.length > 20) history.shift(); // بنحفظ آخر 20 دور بس
-            updateUI();
-        }
+    function updateUI(data) {
+        if(!data.stats) return;
+        
+        // تحديث شريط التاريخ
+        document.getElementById("history").innerHTML = data.history.map(x => `<div class="node">${emojis[x]}</div>`).join("");
+        
+        // تحديث الإحصائيات والأهداف
+        let tBody = "";
+        let meats = ['shrimp', 'cow', 'fish', 'chicken'];
+        let bestMeat = meats[0];
+        let maxScore = -1;
 
-        function updateUI() {
-            // تحديث السجل
-            document.getElementById('log').innerText = history.slice(-5).reverse().join(' ← ');
+        Object.keys(emojis).forEach(f => {
+            let s = data.stats[f];
+            document.getElementById(`a-${f}`).innerText = s.abs;
+            tBody += `<tr><td>${emojis[f]}</td><td>x${mults[f]}</td><td>${s.abs}</td><td>${s.trend}x</td></tr>`;
+            
+            if(meats.includes(f) && s.abs > maxScore) { maxScore = s.abs; bestMeat = f; }
+        });
 
-            // منطق التوقع البسيط
-            if (history.length >= 5) {
-                let last5 = history.slice(-5);
-                let vegCount = last5.filter(i => ['طماطم', 'جزر', 'فلفل', 'درة'].includes(i)).length;
-                
-                let prediction = "";
-                if (vegCount >= 4) {
-                    prediction = "🔥 السيرفر بارد جداً.. ركز على الجمبري أو الجموسة!";
-                } else {
-                    prediction = "🛡️ تذبذب.. أمن نفسك بالخضار (طماطم/فلفل)";
-                }
-                document.getElementById('predict-box').innerText = "التوقع: " + prediction;
-            }
-        }
-    </script>
+        document.getElementById("stats-body").innerHTML = tBody;
+        document.getElementById("main-target").innerText = emojis[bestMeat];
+        document.getElementById("warn-text").innerText = "✅ SYSTEM LIVE - DATA SYNCED";
+    }
+</script>
 </body>
 </html>
