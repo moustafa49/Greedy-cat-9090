@@ -3,33 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V1000 - THE SUPREME BEAST</title>
+    <title>V1000 - THE MASTERMIND ENGINE</title>
     <style>
         :root { --bg: #000; --panel: #0d0d0d; --gold: #ffd700; --neon: #00f2ff; --red: #ff3131; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 5px; }
         .container { max-width: 450px; margin: auto; border: 1px solid #222; border-radius: 20px; padding: 10px; background: var(--panel); }
-        .ai-status { text-align: center; font-size: 10px; color: var(--neon); margin-bottom: 8px; border: 1px solid #1a1a1a; padding: 5px; border-radius: 10px; }
-        .target-box { background: radial-gradient(circle, #111, #000); border: 2px solid var(--gold); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 10px; }
-        .target-emoji { font-size: 70px; display: block; filter: drop-shadow(0 0 20px var(--gold)); }
-        .history { display: flex; gap: 5px; overflow-x: auto; margin-bottom: 10px; padding: 10px; background: #050505; border-radius: 12px; flex-direction: row-reverse; }
-        .h-node { min-width: 35px; height: 35px; background: #111; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid #222; }
+        
+        /* نظام الـ Picks */
+        .picks-container { background: #111; border-radius: 15px; padding: 12px; margin-bottom: 10px; border: 1px solid #222; box-shadow: inset 0 0 10px #000; }
+        .pick-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #1a1a1a; }
+        .pick-row:last-child { border-bottom: none; margin-bottom: 0; }
+        .pick-label { font-size: 11px; color: var(--gold); font-weight: bold; width: 60px; }
+        .pick-emojis { display: flex; gap: 10px; font-size: 22px; flex-grow: 1; justify-content: center; }
+
+        .target-box { background: radial-gradient(circle, #1a1a1a, #000); border: 2px solid var(--gold); border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 10px; position: relative; }
+        .target-emoji { font-size: 60px; display: block; filter: drop-shadow(0 0 15px var(--gold)); }
+        
+        .history { display: flex; gap: 5px; overflow-x: auto; margin-bottom: 10px; padding: 8px; background: #050505; border-radius: 12px; flex-direction: row-reverse; }
+        .h-node { min-width: 32px; height: 32px; background: #111; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1px solid #222; }
+
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .btn { background: #111; border: 1px solid #222; border-radius: 12px; padding: 15px 0; color: #fff; position: relative; overflow: hidden; }
         .btn span { font-size: 26px; position: relative; z-index: 2; }
         .charge-bar { position: absolute; bottom: 0; left: 0; height: 4px; background: var(--gold); transition: width 0.3s; z-index: 1; }
-        .stats-table { width: 100%; margin-top: 20px; font-size: 11px; text-align: center; color: #666; }
-        .active-pattern { color: var(--gold); font-weight: bold; font-size: 12px; margin-bottom: 5px; text-align: center; }
+
+        .stats-table { width: 100%; margin-top: 15px; font-size: 10px; text-align: center; color: #555; }
+        .ai-log { font-size: 10px; color: var(--neon); text-align: center; margin-bottom: 5px; min-height: 14px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="ai-msg" class="ai-status">جارٍ فك شفرة السيرفر...</div>
-    <div id="pattern-display" class="active-pattern">PATTERN: ANALYZING</div>
+    <div id="ai-log" class="ai-log">جاري تحليل بصمة السيرفر...</div>
+
+    <div class="picks-container">
+        <div class="pick-row">
+            <span class="pick-label">6 PICKS</span>
+            <div id="picks-6" class="pick-emojis"></div>
+        </div>
+        <div class="pick-row">
+            <span class="pick-label">5 PICKS</span>
+            <div id="picks-5" class="pick-emojis"></div>
+        </div>
+        <div class="pick-row">
+            <span class="pick-label">4 PICKS</span>
+            <div id="picks-4" class="pick-emojis"></div>
+        </div>
+    </div>
 
     <div class="target-box">
         <div id="target-emoji" class="target-emoji">❓</div>
-        <div style="font-size: 11px; color: var(--gold); font-weight: bold; margin-top: 10px;">التوقع الذكي (ضد السيرفر)</div>
+        <div style="font-size: 10px; color: var(--gold); font-weight: bold;">أقوى هدف منفرد</div>
     </div>
 
     <div id="history" class="history"></div>
@@ -46,83 +70,97 @@
     </div>
 
     <table class="stats-table">
-        <thead><tr><th>الصنف</th><th>تكرار/100</th><th>قوة الاحتمال</th></tr></thead>
+        <thead><tr><th>الصنف</th><th>تكرار/100</th><th>الغياب</th><th>السكور</th></tr></thead>
         <tbody id="radar-body"></tbody>
     </table>
 
-    <div style="display:flex; gap:5px; margin-top:15px;">
-        <button onclick="undo()" style="flex:1; padding:12px; background:#111; color:#555; border:none; border-radius:10px;">تراجع</button>
-        <button onclick="reset()" style="flex:1; padding:12px; background:#300; color:#999; border:none; border-radius:10px;">تصفير</button>
+    <div style="display:flex; gap:8px; margin-top:15px;">
+        <button onclick="undo()" style="flex:1; padding:12px; background:#111; color:#555; border:none; border-radius:10px; cursor:pointer;">تراجع</button>
+        <button onclick="reset()" style="flex:1; padding:12px; background:#300; color:#999; border:none; border-radius:10px; cursor:pointer;">تصفير النظام</button>
     </div>
 </div>
 
 <script>
     const emojis = {corn:"🌽", tomato:"🍅", carrot:"🥕", pepper:"🌶️", shrimp:"🦐", cow:"🐄", fish:"🐟", chicken:"🐔"};
-    // أوزان السيرفر حسب كلامك
     const caps = {shrimp:15, cow:10, fish:6, chicken:4}; 
     const veggies = ['corn', 'tomato', 'carrot', 'pepper'];
     const meats = ['shrimp', 'cow', 'fish', 'chicken'];
     
-    let db = JSON.parse(localStorage.getItem("v1000_supreme_db") || "[]");
+    let db = JSON.parse(localStorage.getItem("v1000_vMaster_db") || "[]");
 
     function add(f) { db.push(f); save(); }
     function undo() { db.pop(); save(); }
-    function reset() { if(confirm("تصفير الذاكرة؟")) { db = []; save(); } }
-    function save() { localStorage.setItem("v1000_supreme_db", JSON.stringify(db)); update(); }
+    function reset() { if(confirm("تصفير الذاكرة بالكامل؟")) { db = []; save(); } }
+    function save() { localStorage.setItem("v1000_vMaster_db", JSON.stringify(db)); update(); }
 
     function update() {
         const len = db.length;
         document.getElementById("history").innerHTML = db.slice(-20).map(x => `<div class="h-node">${emojis[x]}</div>`).join("");
         if (len === 0) return;
 
-        // تحليل المجموعة (3+2 / 3+3)
-        let last4 = db.slice(-4);
-        let vegCount = last4.filter(x => veggies.includes(x)).length;
-        let isDualLoop = (len > 3 && db[len-1] === db[len-3] && db[len-2] === db[len-4]); // كشف تكرار صنفين
+        let last100 = db.slice(-100);
+        let last5 = db.slice(-5);
+        let vegStreak = 0;
+        for(let i=db.length-1; i>=0 && veggies.includes(db[i]); i--) vegStreak++;
 
-        document.getElementById("pattern-display").innerText = isDualLoop ? "ALERT: DUAL LOOP DETECTED" : "PATTERN: " + (vegCount >= 3 ? "MAX VEGGIES REACHED" : "BALANCED");
-
-        let tableHTML = "", maxScore = -1, bestTarget = "";
         let scores = {};
 
         Object.keys(emojis).forEach(f => {
             let lastIdx = db.lastIndexOf(f);
             let abs = (lastIdx === -1) ? 100 : (len - 1 - lastIdx);
-            let countIn100 = db.slice(-100).filter(x => x === f).length;
+            let countIn100 = last100.filter(x => x === f).length;
             
-            let score = 0;
+            // 1. السكور الأساسي (منطق الغياب)
+            let score = abs * 2;
 
-            // 1. قاعدة الـ 4 خضار المستحيلة
-            if (veggies.includes(f) && vegCount >= 3) {
-                score = -100; // منع كامل
-            } else {
-                score = abs * 2; // غياب أطول = احتمال أكبر
-            }
-
-            // 2. تطبيق أسقف اللحوم
+            // 2. منطق الندرة الصارم (الكتكوت/السمكة/البقرة)
             if (meats.includes(f)) {
-                if (countIn100 >= caps[f]) score -= 200; // لو الصنف استنفذ حصته
-                if (vegCount >= 2) score += 50; // تعويض المجموعة
+                if (countIn100 >= caps[f]) {
+                    score = 0; // السيرفر استنفذ الحصة
+                } else {
+                    // النادر لا يتصدر المشهد إلا لو غاب ضعف مدته الطبيعية
+                    let threshold = (100 / (caps[f] || 1)) * 1.5;
+                    if (abs < threshold) score *= 0.4;
+                }
             }
 
-            // 3. ذكاء التكرار والثنائيات
-            if (isDualLoop && (f === db[len-1] || f === db[len-2])) score += 150;
-            if (f === db[len-1] && db[len-1] === db[len-2]) score += 80; // موجة تكرار
+            // 3. منطق المجموعات (3+3 و 3+2)
+            if (veggies.includes(f)) {
+                if (vegStreak >= 3) score *= 0.5; // تهدئة بعد الـ 3 خضار
+                if (vegStreak >= 5) score *= 0.1; // منع شبه كامل بعد الـ 5 خضار
+            } else {
+                if (vegStreak >= 3) score *= 2.5; // رفع احتمالية اللحوم فوراً بعد الخضار
+            }
+
+            // 4. منطق التكرار (الموجة)
+            if (f === db[len-1]) score += 30; 
 
             scores[f] = score;
-            if (score > maxScore) { maxScore = score; bestTarget = f; }
-
-            let displayPct = Math.min(100, Math.max(0, score));
-            document.getElementById(`bar-${f}`).style.width = displayPct + "%";
-            tableHTML += `<tr><td>${emojis[f]}</td><td>${countIn100}/${caps[f] || '--'}</td><td>${displayPct}%</td></tr>`;
         });
 
+        // ترتيب الـ Picks
+        let sorted = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
+
+        // تحديث الـ Picks في الواجهة
+        document.getElementById("picks-6").innerHTML = sorted.slice(0,6).map(x => emojis[x]).join("");
+        document.getElementById("picks-5").innerHTML = sorted.slice(0,5).map(x => emojis[x]).join("");
+        document.getElementById("picks-4").innerHTML = sorted.slice(0,4).map(x => emojis[x]).join("");
+        document.getElementById("target-emoji").innerText = emojis[sorted[0]];
+
+        // تحديث الجدول والبارات
+        let tableHTML = "";
+        Object.keys(emojis).forEach(f => {
+            let sPct = Math.min(100, Math.round(scores[f]));
+            document.getElementById(`bar-${f}`).style.width = sPct + "%";
+            let lastIdx = db.lastIndexOf(f);
+            let abs = (lastIdx === -1) ? len : (len - 1 - lastIdx);
+            tableHTML += `<tr><td>${emojis[f]}</td><td>${last100.filter(x=>x===f).length}/${caps[f]||'--'}</td><td>${abs}</td><td>${sPct}%</td></tr>`;
+        });
         document.getElementById("radar-body").innerHTML = tableHTML;
-        document.getElementById("target-emoji").innerText = emojis[bestTarget];
-        document.getElementById("ai-msg").innerText = "AI ENGINE: " + (maxScore > 100 ? "HIGH CONFIDENCE" : "SCANNING...");
+        
+        document.getElementById("ai-log").innerText = vegStreak >= 3 ? "نظام موازنة المجموعات: دفع اللحوم" : "تحليل النمط: مستقر";
     }
     window.onload = update;
 </script>
 </body>
 </html>
-
