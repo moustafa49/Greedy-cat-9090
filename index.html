@@ -3,121 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE BEAST V5 - LOGIC GATES</title>
+    <title>V6.0 HYBRID - NO LIMITS</title>
     <style>
-        :root { --bg: #000; --neon: #00ff41; --danger: #ff003c; --gold: #ffd700; }
-        body { font-family: 'Courier New', monospace; background: var(--bg); color: var(--neon); margin: 0; padding: 8px; }
-        .main-box { max-width: 450px; margin: auto; border: 2px solid #111; border-radius: 25px; padding: 15px; background: #050505; }
+        :root { --bg: #000; --neon: #00ff41; --danger: #ff003c; --gold: #ffd700; --panel: #0a0a0a; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 5px; }
+        .container { max-width: 480px; margin: auto; border: 1px solid #222; border-radius: 20px; padding: 12px; background: var(--panel); }
         
-        .ai-status { text-align: center; padding: 10px; border-bottom: 2px solid #111; margin-bottom: 15px; }
-        #status-text { font-size: 18px; font-weight: bold; letter-spacing: 1px; }
+        .header { text-align: center; padding: 5px; border-bottom: 1px solid #222; margin-bottom: 10px; }
+        #alert-box { font-size: 14px; font-weight: bold; color: var(--neon); }
 
-        .strip-view { display: flex; gap: 6px; overflow-x: auto; flex-direction: row-reverse; padding: 10px; background: #000; border-radius: 12px; margin-bottom: 15px; border: 1px solid #111; }
-        .node { min-width: 42px; height: 42px; background: #080808; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid #222; }
+        .history { display: flex; gap: 5px; overflow-x: auto; flex-direction: row-reverse; padding: 10px 0; margin-bottom: 10px; }
+        .node { min-width: 38px; height: 38px; background: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 1px solid #222; }
 
-        /* الأهداف الهجومية */
-        .hunt-zone { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
-        .target-card { background: linear-gradient(180deg, #0a0a0a 0%, #000 100%); border: 1px solid #222; border-radius: 15px; padding: 20px; text-align: center; position: relative; }
-        .target-card b { font-size: 50px; display: block; filter: drop-shadow(0 0 10px var(--neon)); }
-        .label { font-size: 10px; color: #555; position: absolute; top: 5px; right: 10px; }
+        /* منطقة التوقعات الثابتة */
+        .picks-box { background: #000; border-radius: 15px; padding: 10px; margin-bottom: 15px; border: 1px solid #1a1a1a; }
+        .pick-line { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; border-bottom: 1px solid #111; padding-bottom: 5px; }
+        .p-label { font-size: 11px; color: var(--gold); width: 60px; }
+        .p-icons { display: flex; gap: 8px; font-size: 24px; }
 
-        .controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .btn { background: #000; border: 1px solid #222; border-radius: 15px; padding: 22px 0; position: relative; transition: 0.1s; }
-        .btn:active { transform: scale(0.9); border-color: var(--neon); }
-        .btn span { font-size: 32px; z-index: 2; position: relative; }
-        .abs-count { position: absolute; top: 2px; right: 5px; font-size: 9px; color: #333; }
+        .target-center { background: radial-gradient(circle, #111 0%, #000 100%); border: 1px solid #222; border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 15px; }
+        .target-center b { font-size: 45px; display: block; }
 
-        .action-bar { display: flex; gap: 10px; margin-top: 15px; }
-        .act-btn { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #222; background: #000; color: #444; font-size: 11px; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .btn { background: #000; border: 1px solid #222; border-radius: 12px; padding: 18px 0; color: #fff; position: relative; }
+        .btn span { font-size: 28px; }
+        .abs-val { position: absolute; top: 2px; right: 5px; font-size: 9px; color: #444; }
+
+        .stats-table { width: 100%; margin-top: 15px; font-size: 10px; text-align: center; border-collapse: collapse; color: #666; }
+        .stats-table th { padding-bottom: 5px; border-bottom: 1px solid #222; }
+        .stats-table td { padding: 8px 0; border-bottom: 1px solid #0a0a0a; }
     </style>
 </head>
 <body>
 
-<div class="main-box">
-    <div class="ai-status">
-        <div id="status-text">INITIALIZING...</div>
+<div class="container">
+    <div class="header"><div id="alert-box">SERVER: CONNECTED</div></div>
+
+    <div class="history" id="history"></div>
+
+    <div class="picks-box">
+        <div class="pick-line"><span class="p-label">PICKS 6</span><div id="p6" class="p-icons"></div></div>
+        <div class="pick-line"><span class="p-label">PICKS 5</span><div id="p5" class="p-icons"></div></div>
+        <div class="pick-line"><span class="p-label">PICKS 4</span><div id="p4" class="p-icons"></div></div>
     </div>
 
-    <div class="strip-view" id="history"></div>
-
-    <div class="hunt-zone">
-        <div class="target-card">
-            <span class="label">الهدف الهجومي (SNIPE)</span>
-            <b id="main-target">?</b>
-            <div id="target-note" style="font-size: 10px; color: var(--gold); margin-top: 5px;"></div>
-        </div>
+    <div class="target-center">
+        <span style="font-size: 9px; color: #555;">الهدف الرئيسي</span>
+        <b id="main-target">?</b>
     </div>
 
-    <div class="controls">
-        <button class="btn" onclick="add('corn')"><div class="abs-count" id="a-corn">0</div><span>🌽</span></button>
-        <button class="btn" onclick="add('tomato')"><div class="abs-count" id="a-tomato">0</div><span>🍅</span></button>
-        <button class="btn" onclick="add('carrot')"><div class="abs-count" id="a-carrot">0</div><span>🥕</span></button>
-        <button class="btn" onclick="add('pepper')"><div class="abs-count" id="a-pepper">0</div><span>🌶️</span></button>
-        <button class="btn" onclick="add('shrimp')"><div class="abs-count" id="a-shrimp">0</div><span>🦐</span></button>
-        <button class="btn" onclick="add('cow')"><div class="abs-count" id="a-cow">0</div><span>🐄</span></button>
-        <button class="btn" onclick="add('fish')"><div class="abs-count" id="a-fish">0</div><span>🐟</span></button>
-        <button class="btn" onclick="add('chicken')"><div class="abs-count" id="a-chicken) ">0</div><span>🐔</span></button>
+    <div class="grid">
+        <button class="btn" onclick="add('corn')"><div class="abs-val" id="a-corn">0</div><span>🌽</span></button>
+        <button class="btn" onclick="add('tomato')"><div class="abs-val" id="a-tomato">0</div><span>🍅</span></button>
+        <button class="btn" onclick="add('carrot')"><div class="abs-val" id="a-carrot">0</div><span>🥕</span></button>
+        <button class="btn" onclick="add('pepper')"><div class="abs-val" id="a-pepper">0</div><span>🌶️</span></button>
+        <button class="btn" onclick="add('shrimp')"><div class="abs-val" id="a-shrimp">0</div><span>🦐</span></button>
+        <button class="btn" onclick="add('cow')"><div class="abs-val" id="a-cow">0</div><span>🐄</span></button>
+        <button class="btn" onclick="add('fish')"><div class="abs-val" id="a-fish">0</div><span>🐟</span></button>
+        <button class="btn" onclick="add('chicken')"><div class="abs-val" id="a-chicken">0</div><span>🐔</span></button>
     </div>
 
-    <div class="action-bar">
-        <button class="act-btn" onclick="undo()">تراجع (UNDO)</button>
-        <button class="act-btn" style="color: var(--danger)" onclick="reset()">مسح الذاكرة</button>
+    <table class="stats-table">
+        <thead><tr><th>الصنف</th><th>الضرب</th><th>الغياب</th><th>السقف</th></tr></thead>
+        <tbody id="s-body"></tbody>
+    </table>
+
+    <div style="display:flex; gap:10px; margin-top:15px;">
+        <button onclick="undo()" style="flex:1; padding:12px; background:#111; color:#fff; border:none; border-radius:10px;">UNDO</button>
+        <button onclick="reset()" style="flex:1; padding:12px; background:#200; color:#fff; border:none; border-radius:10px;">RESET</button>
     </div>
 </div>
 
 <script>
     const emojis = {corn:"🌽", tomato:"🍅", carrot:"🥕", pepper:"🌶️", shrimp:"🦐", cow:"🐄", fish:"🐟", chicken:"🐔"};
     const mults = {corn:5, tomato:5, carrot:5, pepper:5, shrimp:10, cow:15, fish:25, chicken:45};
-    const meats = ['shrimp', 'cow', 'fish', 'chicken'];
+    const caps = {corn:100, tomato:100, carrot:100, pepper:100, shrimp:15, cow:10, fish:6, chicken:2};
     
-    let db = JSON.parse(localStorage.getItem("beast_v5_db") || "[]");
+    let db = JSON.parse(localStorage.getItem("v6_hybrid_db") || "[]");
 
     function add(f) { db.push(f); save(); }
     function undo() { db.pop(); save(); }
-    function reset() { if(confirm("تصفير النظام؟")) { db = []; save(); } }
-    function save() { localStorage.setItem("beast_v5_db", JSON.stringify(db)); update(); }
+    function reset() { if(confirm("مسح؟")) { db = []; save(); } }
+    function save() { localStorage.setItem("v6_hybrid_db", JSON.stringify(db)); update(); }
 
     function update() {
         const len = db.length;
-        document.getElementById("history").innerHTML = db.slice(-12).map(x => `<div class="node">${emojis[x]}</div>`).join("");
+        document.getElementById("history").innerHTML = db.slice(-10).map(x => `<div class="node">${emojis[x]}</div>`).join("");
         if (len === 0) return;
 
-        let last5 = db.slice(-5);
-        let status = document.getElementById("status-text");
-        let target = document.getElementById("main-target");
-        let note = document.getElementById("target-note");
-
-        // 1. كشف الفخاخ (Trap Detection)
-        let vegStreak = last5.filter(x => !meats.includes(x)).length;
+        let last100 = db.slice(-100);
+        let meats = ['shrimp', 'cow', 'fish', 'chicken'];
+        let veggies = ['corn', 'tomato', 'carrot', 'pepper'];
+        
+        // تنبيه السحب (بدون إخفاء)
+        let vegStreak = db.slice(-5).filter(x => veggies.includes(x)).length;
+        let alertBox = document.getElementById("alert-box");
         if (vegStreak >= 5) {
-            status.innerText = "WAIT: SERVER DRAINING";
-            status.style.color = "var(--danger)";
-            target.innerText = "⛔";
-            note.innerText = "السيرفر بيسحب خضار.. اهدى";
-            return;
+            alertBox.innerText = "WAIT: SERVER DRAINING (HIGH RISK)";
+            alertBox.style.color = "var(--danger)";
+        } else {
+            alertBox.innerText = "SERVER: STABLE / HUNTING";
+            alertBox.style.color = "var(--neon)";
         }
 
-        // 2. منطق التوقيع (Logic Gates)
         let scores = {};
         Object.keys(emojis).forEach(f => {
             let abs = (db.lastIndexOf(f) === -1) ? len : (len - 1 - db.lastIndexOf(f));
             document.getElementById(`a-${f}`).innerText = abs;
-            
-            // معادلة القناص: غياب x قوة الضرب + بونص التكرار
-            let baseScore = abs * (50 / mults[f]);
-            
-            // بونص التريند: لو ظهر مرتين في آخر 6 أدوار
-            if (db.slice(-6).filter(x => x === f).length >= 2) baseScore += 200;
-            
-            scores[f] = baseScore;
+            let score = abs * (50 / mults[f]);
+            if (db.slice(-6).filter(x => x === f).length >= 2) score += 150;
+            if (last100.filter(x => x === f).length >= caps[f]) score = -999;
+            scores[f] = score;
         });
 
-        let bestMeat = meats.sort((a,b) => scores[b] - scores[a])[0];
+        const getTop = (list, n) => [...list].sort((a,b) => scores[b] - scores[a]).slice(0, n);
+
+        // التوقعات ثابتة مهما حصل
+        document.getElementById("p6").innerHTML = [...getTop(veggies, 3), ...getTop(meats, 3)].map(x => emojis[x]).join("");
+        document.getElementById("p5").innerHTML = [...getTop(veggies, 3), ...getTop(meats, 2)].map(x => emojis[x]).join("");
+        document.getElementById("p4").innerHTML = [...getTop(veggies, 2), ...getTop(meats, 2)].map(x => emojis[x]).join("");
         
-        status.innerText = "READY TO HUNT";
-        status.style.color = "var(--neon)";
-        target.innerText = emojis[bestMeat];
-        note.innerText = `هدف اللحوم (x${mults[bestMeat]}) - غياب: ${len - 1 - db.lastIndexOf(bestMeat)}`;
+        let bestMeat = getTop(meats, 1)[0];
+        document.getElementById("main-target").innerText = emojis[bestMeat];
+
+        let tableHtml = "";
+        Object.keys(emojis).forEach(f => {
+            tableHtml += `<tr><td>${emojis[f]}</td><td>x${mults[f]}</td><td>${len-1-db.lastIndexOf(f)}</td><td>${last100.filter(x=>x===f).length}/${caps[f]}</td></tr>`;
+        });
+        document.getElementById("s-body").innerHTML = tableHtml;
     }
     window.onload = update;
 </script>
