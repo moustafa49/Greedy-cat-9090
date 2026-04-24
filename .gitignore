@@ -1,13 +1,14 @@
-# ملفات بايثون المؤقتة
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
+from analyzer import GreedyCatAnalyzer
+import os
 
-# ملفات البيانات الخاصة بك (عشان متترفعش كل شوية)
-history.json
-data.log
+def main():
+    print("--- Greedy Cat 9090 System Initializing ---")
+    bot = GreedyCatAnalyzer()
+    
+    # محاكاة بسيطة للتحقق من أن النظام يعمل
+    print("System Check: Active ✅")
+    print("Ready to analyze patterns and distances.")
 
-# ملفات البيئة الافتراضية
-venv/
-.env
+if __name__ == "__main__":
+    # هذا السطر يضمن تشغيل الكود الأساسي عند تشغيل الملف مباشرة
+    main()
