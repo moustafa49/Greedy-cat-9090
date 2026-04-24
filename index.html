@@ -3,47 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V1000 - TREND SCANNER AI</title>
+    <title>V1000 OMNI PRO - AI LEARNING</title>
     <style>
-        :root { --bg: #000; --panel: #0d0d0d; --gold: #ffd700; --neon: #00f2ff; --red: #ff3131; --green: #00ff88; }
+        :root { --bg: #050505; --panel: #0d0d0d; --gold: #ffd700; --neon: #00f2ff; --red: #ff3131; --green: #00ff88; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 5px; }
-        .container { max-width: 450px; margin: auto; border: 1px solid #222; border-radius: 20px; padding: 10px; background: var(--panel); }
+        .container { max-width: 480px; margin: auto; border: 1px solid #222; border-radius: 25px; padding: 12px; background: var(--panel); box-shadow: 0 0 30px rgba(0,0,0,0.5); }
         
-        /* كاشف التريند */
-        .trend-panel { background: #050505; border-radius: 12px; padding: 10px; margin-bottom: 10px; border: 1px solid #1a1a1a; display: flex; justify-content: space-between; align-items: center; }
-        .trend-info { font-size: 11px; color: var(--neon); }
-        .trend-badge { background: var(--red); color: #000; padding: 2px 8px; border-radius: 5px; font-weight: bold; font-size: 10px; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.5; } }
+        /* شاشة الحالة المتقدمة */
+        .ai-dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-card { background: #000; border: 1px solid #1a1a1a; padding: 10px; border-radius: 12px; text-align: center; }
+        .stat-val { font-size: 18px; font-weight: bold; display: block; }
+        .stat-label { font-size: 9px; color: #555; text-transform: uppercase; }
 
-        .history-flow { display: flex; gap: 4px; overflow-x: auto; flex-direction: row-reverse; padding: 8px; background: #111; border-radius: 10px; margin-bottom: 10px; }
-        .h-node { min-width: 35px; height: 35px; background: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid #222; }
+        .strip-reader { background: #000; border-radius: 15px; padding: 10px; margin-bottom: 12px; border: 1px solid #1a1a1a; }
+        .history-flow { display: flex; gap: 5px; overflow-x: auto; flex-direction: row-reverse; height: 45px; align-items: center; }
+        .h-node { min-width: 38px; height: 38px; background: #111; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 1px solid #222; }
 
-        .picks-container { background: #111; border-radius: 15px; padding: 12px; margin-bottom: 10px; border: 1px solid #222; }
-        .pick-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #1a1a1a; padding-bottom: 5px; }
-        .pick-label { font-size: 11px; color: var(--gold); font-weight: bold; width: 60px; }
-        .pick-emojis { display: flex; gap: 8px; font-size: 24px; flex-grow: 1; justify-content: center; }
+        .picks-container { background: linear-gradient(145deg, #111, #080808); border-radius: 20px; padding: 15px; margin-bottom: 15px; border: 1px solid #222; }
+        .pick-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #1a1a1a; padding-bottom: 8px; }
+        .pick-label { font-size: 12px; color: var(--gold); font-weight: bold; width: 70px; }
+        .pick-emojis { display: flex; gap: 8px; font-size: 26px; flex-grow: 1; justify-content: center; }
 
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .btn { background: #111; border: 1px solid #222; border-radius: 12px; padding: 15px 0; color: #fff; position: relative; overflow: hidden; }
-        .btn span { font-size: 28px; position: relative; z-index: 2; }
-        .charge-bar { position: absolute; bottom: 0; left: 0; height: 4px; background: var(--gold); transition: width 0.3s; z-index: 1; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .btn { background: #111; border: 1px solid #222; border-radius: 15px; padding: 18px 0; color: #fff; position: relative; overflow: hidden; transition: 0.2s; }
+        .btn:active { transform: scale(0.95); background: #1a1a1a; }
+        .btn span { font-size: 32px; position: relative; z-index: 2; }
+        .charge-bar { position: absolute; bottom: 0; left: 0; height: 5px; background: var(--gold); transition: width 0.3s; z-index: 1; }
 
-        .stats-table { width: 100%; margin-top: 15px; font-size: 11px; text-align: center; border-collapse: collapse; }
+        .stats-table { width: 100%; margin-top: 20px; font-size: 11px; text-align: center; border-collapse: collapse; }
         .stats-table th { color: #444; padding-bottom: 10px; border-bottom: 1px solid #222; }
-        .stats-table td { padding: 10px 0; border-bottom: 1px solid #0a0a0a; }
-        .trend-node { color: var(--green); font-weight: bold; }
-        .dead { opacity: 0.2; }
+        .stats-table td { padding: 12px 0; border-bottom: 1px solid #0a0a0a; }
+        .hot-trend { color: var(--green); font-weight: bold; text-shadow: 0 0 8px var(--green); }
+        .dead { opacity: 0.2; filter: grayscale(1); }
+        
+        .pulse { animation: pulse-red 1.5s infinite; }
+        @keyframes pulse-red { 0% { color: var(--red); } 50% { color: #600; } 100% { color: var(--red); } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="trend-panel">
-        <div class="trend-info">حالة الشريط: <span id="trend-status">مستقر</span></div>
-        <div id="trend-alert" style="display:none;" class="trend-badge">TREND DETECTED!</div>
+    <div class="ai-dashboard">
+        <div class="stat-card">
+            <span id="pressure-val" class="stat-val">0%</span>
+            <span class="stat-label">ضغط اللحوم (Pressure)</span>
+        </div>
+        <div class="stat-card">
+            <span id="status-val" class="stat-val" style="color: var(--green);">SAFE</span>
+            <span class="stat-label">حالة السيرفر (Status)</span>
+        </div>
     </div>
 
-    <div id="history" class="history-flow"></div>
+    <div class="strip-reader">
+        <div class="history-flow" id="history"></div>
+    </div>
 
     <div class="picks-container">
         <div class="pick-row"><span class="pick-label">6 PICKS</span><div id="picks-6" class="pick-emojis"></div></div>
@@ -63,13 +76,13 @@
     </div>
 
     <table class="stats-table">
-        <thead><tr><th>الصنف</th><th>الضرب</th><th>الغياب</th><th>الشريط</th><th>سكور</th></tr></thead>
+        <thead><tr><th>الصنف</th><th>الضرب</th><th>الغياب</th><th>التريند</th><th>الاحتمال</th></tr></thead>
         <tbody id="radar-body"></tbody>
     </table>
 
-    <div style="display:flex; gap:8px; margin-top:15px;">
-        <button onclick="undo()" style="flex:1; padding:12px; background:#111; color:#555; border:none; border-radius:10px;">UNDO</button>
-        <button onclick="reset()" style="flex:1; padding:12px; background:#300; color:#888; border:none; border-radius:10px;">RESET</button>
+    <div style="display:flex; gap:10px; margin-top:20px;">
+        <button onclick="undo()" style="flex:1; padding:15px; background:#111; color:#555; border:none; border-radius:12px; font-weight:bold;">UNDO</button>
+        <button onclick="reset()" style="flex:1; padding:15px; background:#200; color:#844; border:none; border-radius:12px; font-weight:bold;">RESET STRIP</button>
     </div>
 </div>
 
@@ -80,12 +93,12 @@
     const veggies = ['corn', 'tomato', 'carrot', 'pepper'];
     const meats = ['shrimp', 'cow', 'fish', 'chicken'];
     
-    let db = JSON.parse(localStorage.getItem("v1000_trend_db") || "[]");
+    let db = JSON.parse(localStorage.getItem("v1000_omni_db") || "[]");
 
     function add(f) { db.push(f); save(); }
     function undo() { db.pop(); save(); }
     function reset() { if(confirm("تصفير الشريط؟")) { db = []; save(); } }
-    function save() { localStorage.setItem("v1000_trend_db", JSON.stringify(db)); update(); }
+    function save() { localStorage.setItem("v1000_omni_db", JSON.stringify(db)); update(); }
 
     function update() {
         const len = db.length;
@@ -93,57 +106,54 @@
         if (len === 0) return;
 
         let last100 = db.slice(-100);
-        let last10 = db.slice(-10);
+        let last15 = db.slice(-15);
         let scores = {};
-        let trendDetected = false;
 
-        // تحليل الـ Trend
-        let meatCount = last10.filter(x => meats.includes(x)).length;
-        document.getElementById("trend-status").innerText = meatCount >= 4 ? "Trend لحوم 🍖" : "Trend خضار 🥗";
-        document.getElementById("trend-status").style.color = meatCount >= 4 ? "#ff3131" : "#00ff88";
+        // 1. حساب ضغط اللحوم (Pressure)
+        let meatCount = last15.filter(x => meats.includes(x)).length;
+        let pressure = Math.round(((15 - meatCount) / 15) * 100);
+        document.getElementById("pressure-val").innerText = pressure + "%";
+        
+        let statusBox = document.getElementById("status-val");
+        if (pressure > 70) { statusBox.innerText = "HIGH PRESSURE"; statusBox.className = "stat-val pulse"; }
+        else { statusBox.innerText = "STABLE"; statusBox.className = "stat-val"; statusBox.style.color = "var(--green)"; }
 
+        // 2. معالجة الأصناف
         Object.keys(emojis).forEach(f => {
             let lastIdx = db.lastIndexOf(f);
             let absent = (lastIdx === -1) ? len : (len - 1 - lastIdx);
             let count100 = last100.filter(x => x === f).length;
-            let countInLast6 = db.slice(-6).filter(x => x === f).length;
+            let countLast8 = db.slice(-8).filter(x => x === f).length;
             
-            // سكور الغياب
-            let score = absent * (30 / mults[f]);
+            // سكور الغياب المطور
+            let score = absent * (35 / mults[f]);
 
-            // منطق الـ Trend: لو الصنف ظهر مرتين أو أكتر في آخر 6 أدوار، ارفع سكره فوراً
-            if (countInLast6 >= 2) {
-                score += 150; 
-                trendDetected = true;
-            }
-
-            // بونص الموجة الحارة
-            if (absent === 0) score += 60;
+            // نظام Trend Booster
+            if (countLast8 >= 2) score += 180; // لو بيتكرر في الشريط يفضل موجود
+            if (absent === 0) score += 70; // بونص الظهور الحالي
 
             if (count100 >= caps[f]) score = -1000;
             scores[f] = score;
 
             let sPct = Math.min(100, Math.max(0, Math.round(score)));
-            document.getElementById(`bar-${f}`).style.width = sPct + "%";
+            if(document.getElementById(`bar-${f}`)) document.getElementById(`bar-${f}`).style.width = sPct + "%";
         });
 
-        document.getElementById("trend-alert").style.display = trendDetected ? "block" : "none";
-
+        // 3. تطبيق الأنماط 3+3 و 2+2
         const getBest = (list, count) => [...list].sort((a,b) => scores[b] - scores[a]).slice(0, count);
 
-        // توزيع الأنماط 3+3 و 2+2
         document.getElementById("picks-6").innerHTML = [...getBest(veggies, 3), ...getBest(meats, 3)].map(x => emojis[x]).join("");
         document.getElementById("picks-5").innerHTML = [...getBest(veggies, 3), ...getBest(meats, 2)].map(x => emojis[x]).join("");
         document.getElementById("picks-4").innerHTML = [...getBest(veggies, 2), ...getBest(meats, 2)].map(x => emojis[x]).join("");
 
         let tableHTML = "";
         Object.keys(emojis).forEach(f => {
-            let count6 = db.slice(-6).filter(x => x === f).length;
+            let trendCount = db.slice(-10).filter(x => x === f).length;
             tableHTML += `<tr class="${scores[f] < 0 ? 'dead':''}">
                 <td>${emojis[f]}</td>
                 <td>x${mults[f]}</td>
-                <td>${len - 1 - db.lastIndexOf(f)}</td>
-                <td class="${count6 >= 2 ? 'trend-node':''}">${count6}x (6d)</td>
+                <td style="color:${(len - 1 - db.lastIndexOf(f)) > 15 ? 'var(--gold)' : ''}">${len - 1 - db.lastIndexOf(f)}</td>
+                <td class="${trendCount >= 2 ? 'hot-trend' : ''}">${trendCount}x</td>
                 <td>${Math.min(100, Math.max(0, Math.round(scores[f])))}%</td>
             </tr>`;
         });
