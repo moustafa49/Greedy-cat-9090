@@ -3,69 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V2000 - THE SNIPER AI</title>
+    <title>V3000 - GHOST AI ENGINE</title>
     <style>
-        :root { --bg: #020202; --card: #0a0a0a; --gold: #ffd700; --neon: #00f2ff; --red: #ff3131; --green: #0bda51; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 5px; }
-        .container { max-width: 480px; margin: auto; border: 1px solid #1a1a1a; border-radius: 30px; padding: 15px; background: var(--card); }
+        :root { --bg: #000; --neon: #bcff00; --red: #ff003c; --gold: #f5af19; }
+        body { font-family: 'Courier New', monospace; background: var(--bg); color: #fff; margin: 0; padding: 10px; }
+        .ghost-container { max-width: 450px; margin: auto; border: 2px solid #111; border-radius: 20px; padding: 15px; position: relative; overflow: hidden; }
         
-        /* رادار القناص */
-        .sniper-header { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #000; border-radius: 15px; border: 1px solid #222; margin-bottom: 15px; }
-        .signal { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: bold; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
-        
-        .history-strip { display: flex; gap: 6px; overflow-x: auto; flex-direction: row-reverse; padding: 10px; background: #050505; border-radius: 12px; margin-bottom: 15px; border-bottom: 2px solid #111; }
-        .node { min-width: 40px; height: 40px; background: #111; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid #222; position: relative; }
-        .node.trend::after { content: '🔥'; position: absolute; top: -5px; right: -5px; font-size: 10px; }
+        /* رادار الموجات */
+        .wave-analyzer { height: 60px; background: #050505; border-radius: 10px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; border: 1px solid #1a1a1a; position: relative; }
+        #wave-status { font-weight: bold; font-size: 14px; letter-spacing: 2px; }
+        .scanner-line { position: absolute; width: 2px; height: 100%; background: var(--neon); left: 0; animation: scan 2s infinite linear; opacity: 0.3; }
+        @keyframes scan { 100% { left: 100%; } }
 
-        .ai-picks { background: linear-gradient(180deg, #111 0%, #000 100%); border-radius: 20px; padding: 15px; border: 1px solid #222; margin-bottom: 15px; position: relative; }
-        .ai-picks::before { content: 'AI TARGETS'; position: absolute; top: -8px; left: 20px; background: #ffd700; color: #000; font-size: 9px; font-weight: bold; padding: 2px 8px; border-radius: 4px; }
-        .pick-row { display: flex; justify-content: center; gap: 15px; margin-top: 5px; }
-        .target { font-size: 32px; filter: drop-shadow(0 0 5px rgba(255,215,0,0.3)); }
+        .strip-box { display: flex; gap: 8px; overflow-x: auto; flex-direction: row-reverse; padding: 10px 0; border-bottom: 1px solid #111; }
+        .n { min-width: 42px; height: 42px; background: #080808; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid #222; }
 
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .btn { background: #000; border: 1px solid #222; border-radius: 18px; padding: 20px 0; color: #fff; position: relative; transition: 0.1s; }
-        .btn:active { transform: translateY(3px); background: #111; }
-        .btn span { font-size: 30px; position: relative; z-index: 2; }
-        .bar { position: absolute; bottom: 0; left: 0; height: 4px; background: var(--gold); transition: width 0.3s; z-index: 1; }
+        /* التوقعات المخفية */
+        .ghost-picks { min-height: 100px; display: flex; align-items: center; justify-content: center; gap: 20px; background: radial-gradient(circle, #111 0%, #000 100%); border-radius: 15px; margin: 15px 0; border: 1px dashed #333; }
+        .target-item { font-size: 45px; transition: 0.5s; filter: grayscale(1); opacity: 0.3; }
+        .target-item.active { filter: grayscale(0); opacity: 1; transform: scale(1.2); text-shadow: 0 0 15px var(--neon); }
 
-        .footer-tools { display: flex; gap: 10px; margin-top: 15px; }
-        .tool-btn { flex: 1; padding: 12px; border-radius: 12px; border: none; font-size: 11px; font-weight: bold; cursor: pointer; }
-        .stats-min { width: 100%; margin-top: 15px; font-size: 10px; color: #444; text-align: center; border-collapse: collapse; }
+        .control-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .c-btn { background: #000; border: 1px solid #1a1a1a; border-radius: 12px; padding: 22px 0; position: relative; }
+        .c-btn span { font-size: 32px; z-index: 2; position: relative; }
+        .heat-map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--neon); opacity: 0; transition: 0.3s; z-index: 1; }
+
+        .mini-stats { display: flex; justify-content: space-between; font-size: 10px; color: #444; margin-top: 15px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="sniper-header">
-        <div class="signal"><div id="sig-dot" class="dot"></div> <span id="sig-text">SCANNING...</span></div>
-        <div style="font-size: 10px; color: #555;">V2000 PRO AI</div>
+<div class="ghost-container">
+    <div class="wave-analyzer">
+        <div class="scanner-line"></div>
+        <div id="wave-status">INITIALIZING AI...</div>
     </div>
 
-    <div class="history-strip" id="history"></div>
+    <div class="strip-box" id="history"></div>
 
-    <div class="ai-picks">
-        <div id="targets-display" class="pick-row"></div>
+    <div class="ghost-picks" id="display">
+        <div style="color:#222">NO TARGETS YET</div>
     </div>
 
-    <div class="grid">
-        <button class="btn" onclick="add('corn')"><span>🌽</span><div id="bar-corn" class="bar"></div></button>
-        <button class="btn" onclick="add('tomato')"><span>🍅</span><div id="bar-tomato" class="bar"></div></button>
-        <button class="btn" onclick="add('carrot')"><span>🥕</span><div id="bar-carrot" class="bar"></div></button>
-        <button class="btn" onclick="add('pepper')"><span>🌶️</span><div id="bar-pepper" class="bar"></div></button>
-        <button class="btn" onclick="add('shrimp')"><span>🦐</span><div id="bar-shrimp" class="bar"></div></button>
-        <button class="btn" onclick="add('cow')"><span>🐄</span><div id="bar-cow" class="bar"></div></button>
-        <button class="btn" onclick="add('fish')"><span>🐟</span><div id="bar-fish" class="bar"></div></button>
-        <button class="btn" onclick="add('chicken')"><span>🐔</span><div id="bar-chicken" class="bar"></div></button>
+    <div class="control-grid">
+        <button class="c-btn" onclick="add('corn')"><span>🌽</span><div id="h-corn" class="heat-map"></div></button>
+        <button class="c-btn" onclick="add('tomato')"><span>🍅</span><div id="h-tomato" class="heat-map"></div></button>
+        <button class="c-btn" onclick="add('carrot')"><span>🥕</span><div id="h-carrot" class="heat-map"></div></button>
+        <button class="c-btn" onclick="add('pepper')"><span></span>🌶️<div id="h-pepper" class="heat-map"></div></button>
+        <button class="c-btn" onclick="add('shrimp')"><span>🦐</span><div id="h-shrimp" class="heat-map"></div></button>
+        <button class="c-btn" onclick="add('cow')"><span>🐄</span><div id="h-cow" class="heat-map"></div></button>
+        <button class="c-btn" onclick="add('fish')"><span>🐟</span><div id="h-fish" class="heat-map"></div></button>
+        <button class="c-btn" onclick="add('chicken')"><span>🐔</span><div id="h-chicken" class="heat-map"></div></button>
     </div>
 
-    <table class="stats-min">
-        <tbody id="stats-body"></tbody>
-    </table>
-
-    <div class="footer-tools">
-        <button class="tool-btn" style="background: #111; color: #666;" onclick="undo()">UNDO</button>
-        <button class="tool-btn" style="background: #200; color: #a44;" onclick="reset()">RESET</button>
+    <div class="mini-stats">
+        <span id="absent-top"></span>
+        <span onclick="reset()" style="cursor:pointer; color:var(--red)">[WIPE DATA]</span>
+        <span onclick="undo()" style="cursor:pointer">[UNDO]</span>
     </div>
 </div>
 
@@ -74,65 +68,57 @@
     const mults = {corn:5, tomato:5, carrot:5, pepper:5, shrimp:10, cow:15, fish:25, chicken:45};
     const caps = {corn:100, tomato:100, carrot:100, pepper:100, shrimp:15, cow:10, fish:6, chicken:2};
     
-    let db = JSON.parse(localStorage.getItem("sniper_v2_db") || "[]");
+    let db = JSON.parse(localStorage.getItem("ghost_v3_db") || "[]");
 
     function add(f) { db.push(f); save(); }
     function undo() { db.pop(); save(); }
-    function reset() { if(confirm("تصفير؟")) { db = []; save(); } }
-    function save() { localStorage.setItem("sniper_v2_db", JSON.stringify(db)); update(); }
+    function reset() { if(confirm("تصفير الذاكرة؟")) { db = []; save(); } }
+    function save() { localStorage.setItem("ghost_v3_db", JSON.stringify(db)); update(); }
 
     function update() {
         const len = db.length;
-        const histDiv = document.getElementById("history");
-        histDiv.innerHTML = db.slice(-15).map((x, i) => {
-            let isTrend = (db.slice(-15)[i] === db.slice(-15)[i-1]);
-            return `<div class="node ${isTrend?'trend':''}">${emojis[x]}</div>`;
-        }).join("");
-
+        document.getElementById("history").innerHTML = db.slice(-12).map(x => `<div class="n">${emojis[x]}</div>`).join("");
         if (len === 0) return;
 
         let last10 = db.slice(-10);
-        let last100 = db.slice(-100);
-        let scores = {};
+        let meats = ['shrimp', 'cow', 'fish', 'chicken'];
+        let meatTrend = last10.filter(x => meats.includes(x)).length;
+        
+        let status = document.getElementById("wave-status");
+        let display = document.getElementById("display");
 
-        // تحليل ذكاء السيرفر
-        let meatCount = last10.filter(x => ['shrimp','cow','fish','chicken'].includes(x)).length;
-        let sigDot = document.getElementById("sig-dot");
-        let sigText = document.getElementById("sig-text");
-
-        if (meatCount === 0 && len > 5) {
-            sigDot.style.background = "#ff3131"; sigText.innerText = "SCAM RISK / COLD";
-        } else if (meatCount > 3) {
-            sigDot.style.background = "#ffd700"; sigText.innerText = "MEAT TREND ACTIVE";
+        // منطق الـ Ghost Mode (الذكاء الحقيقي)
+        if (meatTrend >= 4) {
+            status.innerText = "DANGER: MEAT OVERLOAD";
+            status.style.color = var(--red);
+        } else if (last10.slice(-5).filter(x => !meats.includes(x)).length === 5) {
+            status.innerText = "WAIT: SERVER DRAINING";
+            status.style.color = "#555";
+            display.innerHTML = "<div style='color:#333'>-- DO NOT PLAY --</div>";
+            return;
         } else {
-            sigDot.style.background = "#0bda51"; sigText.innerText = "STABLE FLOW";
+            status.innerText = "SYSTEM READY - SNIPE NOW";
+            status.style.color = var(--neon);
         }
 
+        let scores = {};
         Object.keys(emojis).forEach(f => {
             let abs = (db.lastIndexOf(f) === -1) ? len : (len - 1 - db.lastIndexOf(f));
-            let c100 = last100.filter(x => x === f).length;
-            let c5 = db.slice(-5).filter(x => x === f).length;
-
-            // منطق القناص: الموجة تغلب الغياب
-            let score = (abs * 2) + (c5 * 50); 
+            let c100 = db.slice(-100).filter(x => x === f).length;
             
-            // سكور إضافي للـ Trend اللحظي
-            if (db[len-1] === f) score += 40; 
-            if (c100 >= caps[f]) score = -1000;
-
+            // سكور يعتمد على الغياب النسبي للضرب
+            let score = (abs * 3) / (mults[f] / 10);
+            
+            // ميزة الـ Combo (لو لسه جاي يفضل في الحسابات)
+            if (abs === 0) score += 50;
+            if (c100 >= caps[f]) score = -999;
+            
             scores[f] = score;
-            document.getElementById(`bar-${f}`).style.width = Math.min(100, Math.max(0, score)) + "%";
+            document.getElementById(`h-${f}`).style.opacity = Math.min(0.6, score/200);
         });
 
-        // اختيار أفضل 5 أهداف (الخلاصة)
-        let sorted = Object.keys(emojis).sort((a,b) => scores[b] - scores[a]).slice(0, 5);
-        document.getElementById("targets-display").innerHTML = sorted.map(x => `<div class="target">${emojis[x]}</div>`).join("");
-
-        let tableHtml = "";
-        Object.keys(emojis).forEach(f => {
-            tableHtml += `<tr><td>${emojis[f]}</td><td>ABS: ${len-1-db.lastIndexOf(f)}</td><td>CAP: ${last100.filter(x=>x===f).length}/${caps[f]}</td></tr>`;
-        });
-        document.getElementById("stats-body").innerHTML = tableHtml;
+        let top3 = Object.keys(emojis).sort((a,b) => scores[b] - scores[a]).slice(0, 3);
+        display.innerHTML = top3.map(x => `<div class="target-item active">${emojis[x]}</div>`).join("");
     }
     window.onload = update;
 </script>
