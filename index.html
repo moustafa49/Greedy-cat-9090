@@ -9,7 +9,6 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 5px; overflow-x: hidden; }
         .container { max-width: 450px; margin: auto; border: 1px solid #222; border-radius: 20px; padding: 10px; background: var(--panel); }
         
-        /* بصمة الماكينة */
         .machine-type { text-align: center; font-size: 11px; padding: 5px; border-radius: 50px; margin-bottom: 10px; border: 1px solid #333; }
         .type-stable { color: var(--blue); border-color: var(--blue); }
         .type-chaos { color: var(--red); border-color: var(--red); }
@@ -24,7 +23,6 @@
         .btn { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; padding: 12px 0; color: #fff; position: relative; overflow: hidden; }
         .btn span { font-size: 24px; position: relative; z-index: 2; }
         
-        /* شحن النادر */
         .charge-bar { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--gold); transition: width 0.3s; z-index: 1; }
 
         .stats-table { width: 100%; margin-top: 15px; font-size: 10px; text-align: center; color: #888; }
@@ -40,7 +38,7 @@
 <body>
 
 <div class="container">
-    <div id="m-type" class="machine-type">جاري تحليل بصمة الماكينة...</div>
+    <div id="m-type" class="machine-type">تحليل البصمة...</div>
     
     <div class="target-box">
         <div id="target-emoji" class="target-emoji">❓</div>
@@ -87,46 +85,50 @@
         save(); 
     }
     function undo() { db.pop(); save(); }
-    function reset() { if(confirm("تصفير؟")) { db = []; save(); } }
+    function reset() { if(confirm("تصفير كل البيانات؟")) { db = []; save(); } }
     function save() { localStorage.setItem("v1000_db", JSON.stringify(db)); update(); }
 
     function update() {
         const len = db.length;
-        if (len === 0) return;
-
         document.getElementById("history").innerHTML = db.slice(-20).map(x => `<div class="h-node">${emojis[x]}</div>`).join("");
+        
+        if (len === 0) {
+            document.getElementById("g6").innerText = "---";
+            document.getElementById("target-emoji").innerText = "❓";
+            return;
+        }
 
         const recent = db.slice(-5);
         const uniqueInRecent = [...new Set(recent)].length;
         const mType = document.getElementById("m-type");
         
-        // تحليل بصمة الماكينة
-        if(uniqueInRecent <= 3) { mType.innerText = "🟦 بصمة الماكينة: مستقرة (كرّارة)"; mType.className = "machine-type type-stable"; }
-        else { mType.innerText = "🟥 بصمة الماكينة: متغيرة (غدّارة)"; mType.className = "machine-type type-chaos"; }
+        if(uniqueInRecent <= 3) { 
+            mType.innerText = "🟦 بصمة الماكينة: مستقرة (كرّارة)"; 
+            mType.className = "machine-type type-stable"; 
+        } else { 
+            mType.innerText = "🟥 بصمة الماكينة: متغيرة (غدّارة)"; 
+            mType.className = "machine-type type-chaos"; 
+        }
 
-        let scores = {}, tableHTML = "", maxJafala = -1, bestTarget = "";
+        let tableHTML = "", maxScore = -1, bestTarget = "";
+        let finalScores = {};
 
         Object.keys(config).forEach(f => {
             let lastIdx = db.lastIndexOf(f);
             let abs = (lastIdx === -1) ? Math.min(len, 100) : (len - 1 - lastIdx);
             
-            // شحن النادر
-            let charge = Math.min(100, (abs / (100/config[f])) * 10);
-            document.getElementById(`bar-${f}`).style.width = charge + "%";
+            // حساب الجعفلة بناءً على الندرة (Config)
+            let jafala = Math.min(100, Math.round((abs / (100 / config[f])) * 10));
+            document.getElementById(`bar-${f}`).style.width = jafala + "%";
 
-            let score = Math.round((abs * 10) / (100 / config[f]));
+            // منطق "الهدف": غياب طويل + ندرة الصنف - التكرار القريب
+            let score = jafala;
+            if (recent.includes(f)) score -= 30;
+            if (f === db[len-1]) score -= 50;
             
-            // تثبيت ملوك الشريط
-            if (recent.includes(f)) score += 100000;
-            if (f === db[len-1]) score += 50000;
-            
-            // ذكاء التوأم (بسيط)
-            if(len > 2 && db[len-2] === db[len-1] && f === db[len-1]) score += 20000;
+            finalScores[f] = score;
 
-            scores[f] = score;
-
-            let jafala = Math.min(100, Math.round((abs / (100/config[f])) * 10));
-            if (jafala > maxJafala) { maxJafala = jafala; bestTarget = f; }
+            if (score > maxScore) { maxScore = score; bestTarget = f; }
             
             if(jafala >= 95 && window.navigator.vibrate) window.navigator.vibrate([100, 50, 100]);
 
@@ -141,8 +143,8 @@
         document.getElementById("radar-body").innerHTML = tableHTML;
         document.getElementById("target-emoji").innerText = emojis[bestTarget];
 
-        let sV = veggies.sort((a,b) => scores[b] - scores[a]);
-        let sM = meats.sort((a,b) => scores[b] - scores[a]);
+        let sV = veggies.sort((a,b) => finalScores[b] - finalScores[a]);
+        let sM = meats.sort((a,b) => finalScores[b] - finalScores[a]);
         document.getElementById("g6").innerText = sV.slice(0,3).concat(sM.slice(0,3)).map(x => emojis[x]).join("");
     }
     window.onload = update;
