@@ -3,54 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V1000 - ULTIMATE MASTERMIND</title>
+    <title>V1000 - THE SUPREME BEAST</title>
     <style>
-        :root { --bg: #000; --panel: #080808; --gold: #ffd700; --neon: #00f2ff; --red: #ff3131; --blue: #007bff; --green: #00ff88; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 5px; overflow-x: hidden; }
-        .container { max-width: 450px; margin: auto; border: 1px solid #222; border-radius: 20px; padding: 10px; background: var(--panel); box-shadow: 0 0 20px rgba(255,215,0,0.05); }
-        
-        .machine-type { text-align: center; font-size: 11px; padding: 6px; border-radius: 50px; margin-bottom: 10px; border: 1px solid #333; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-        .type-stable { color: var(--blue); border-color: var(--blue); background: rgba(0,123,255,0.05); }
-        .type-chaos { color: var(--red); border-color: var(--red); background: rgba(255,49,49,0.05); }
-
-        .target-box { background: linear-gradient(145deg, #0f0f0f, #000); border: 2px solid var(--gold); border-radius: 15px; padding: 15px; text-align: center; margin-bottom: 10px; position: relative; box-shadow: 0 0 15px rgba(255,215,0,0.1); }
-        .target-emoji { font-size: 60px; display: block; filter: drop-shadow(0 0 20px var(--gold)); margin-bottom: 5px; }
-        .target-label { font-size: 11px; color: var(--gold); font-weight: bold; letter-spacing: 2px; }
-        
-        .history { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 10px; padding: 10px; background: #050505; border-radius: 12px; flex-direction: row-reverse; border: 1px solid #111; }
-        .h-node { min-width: 38px; height: 38px; background: #0c0c0c; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 1px solid #1f1f1f; transition: all 0.2s; }
-
+        :root { --bg: #000; --panel: #0d0d0d; --gold: #ffd700; --neon: #00f2ff; --red: #ff3131; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 5px; }
+        .container { max-width: 450px; margin: auto; border: 1px solid #222; border-radius: 20px; padding: 10px; background: var(--panel); }
+        .ai-status { text-align: center; font-size: 10px; color: var(--neon); margin-bottom: 8px; border: 1px solid #1a1a1a; padding: 5px; border-radius: 10px; }
+        .target-box { background: radial-gradient(circle, #111, #000); border: 2px solid var(--gold); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 10px; }
+        .target-emoji { font-size: 70px; display: block; filter: drop-shadow(0 0 20px var(--gold)); }
+        .history { display: flex; gap: 5px; overflow-x: auto; margin-bottom: 10px; padding: 10px; background: #050505; border-radius: 12px; flex-direction: row-reverse; }
+        .h-node { min-width: 35px; height: 35px; background: #111; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid #222; }
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .btn { background: #0c0c0c; border: 1px solid #222; border-radius: 12px; padding: 15px 0; color: #fff; position: relative; overflow: hidden; transition: transform 0.1s; cursor: pointer; }
-        .btn:active { transform: scale(0.95); background: #151515; }
+        .btn { background: #111; border: 1px solid #222; border-radius: 12px; padding: 15px 0; color: #fff; position: relative; overflow: hidden; }
         .btn span { font-size: 26px; position: relative; z-index: 2; }
-        
-        .charge-bar { position: absolute; bottom: 0; left: 0; height: 4px; background: var(--gold); transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1; box-shadow: 0 0 5px var(--gold); }
-
-        .stats-table { width: 100%; margin-top: 20px; font-size: 11px; text-align: center; color: #aaa; border-collapse: collapse; }
-        .stats-table th { color: #555; padding-bottom: 8px; border-bottom: 1px solid #1a1a1a; font-size: 9px; }
-        .stats-table td { padding: 8px 0; border-bottom: 1px solid #0a0a0a; }
-        .jafala-text { font-weight: bold; }
-        .blink { animation: blinker 0.8s infinite; }
-        @keyframes blinker { 50% { opacity: 0.2; transform: scale(0.9); } }
-
-        .sys-display { background: #000; border-radius: 12px; padding: 12px; text-align: center; margin-bottom: 10px; border: 1px solid #151515; position: relative; overflow: hidden; }
-        .sys-display::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(transparent, rgba(255,255,255,0.02)); pointer-events: none; }
-        .sys-text { font-size: 24px; letter-spacing: 6px; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); font-weight: bold; }
+        .charge-bar { position: absolute; bottom: 0; left: 0; height: 4px; background: var(--gold); transition: width 0.3s; z-index: 1; }
+        .stats-table { width: 100%; margin-top: 20px; font-size: 11px; text-align: center; color: #666; }
+        .active-pattern { color: var(--gold); font-weight: bold; font-size: 12px; margin-bottom: 5px; text-align: center; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="m-type" class="machine-type">INITIALIZING AI SYSTEM...</div>
-    
+    <div id="ai-msg" class="ai-status">جارٍ فك شفرة السيرفر...</div>
+    <div id="pattern-display" class="active-pattern">PATTERN: ANALYZING</div>
+
     <div class="target-box">
         <div id="target-emoji" class="target-emoji">❓</div>
-        <div class="target-label">NEXT SERVER TARGET</div>
-    </div>
-
-    <div class="sys-display">
-        <div id="g6" class="sys-text">---</div>
+        <div style="font-size: 11px; color: var(--gold); font-weight: bold; margin-top: 10px;">التوقع الذكي (ضد السيرفر)</div>
     </div>
 
     <div id="history" class="history"></div>
@@ -67,110 +46,83 @@
     </div>
 
     <table class="stats-table">
-        <thead><tr><th>ITEM</th><th>ABSENT</th><th>RADAR</th><th>AI SCORE %</th></tr></thead>
+        <thead><tr><th>الصنف</th><th>تكرار/100</th><th>قوة الاحتمال</th></tr></thead>
         <tbody id="radar-body"></tbody>
     </table>
 
-    <div style="display:flex; gap:8px; margin-top:15px;">
-        <button onclick="undo()" style="flex:1; padding:14px; background:#111; border:1px solid #222; color:#666; border-radius:12px; font-weight:bold; cursor:pointer;">UNDO</button>
-        <button onclick="reset()" style="flex:1; padding:14px; background:#200; border:1px solid #400; color:#a44; border-radius:12px; font-weight:bold; cursor:pointer;">SYSTEM RESET</button>
+    <div style="display:flex; gap:5px; margin-top:15px;">
+        <button onclick="undo()" style="flex:1; padding:12px; background:#111; color:#555; border:none; border-radius:10px;">تراجع</button>
+        <button onclick="reset()" style="flex:1; padding:12px; background:#300; color:#999; border:none; border-radius:10px;">تصفير</button>
     </div>
 </div>
 
 <script>
     const emojis = {corn:"🌽", tomato:"🍅", carrot:"🥕", pepper:"🌶️", shrimp:"🦐", cow:"🐄", fish:"🐟", chicken:"🐔"};
-    const config = {corn:16, tomato:16, carrot:16, pepper:16, shrimp:12, cow:8, fish:5, chicken:2.5};
-    const veggies = ['corn', 'tomato', 'carrot', 'pepper'], meats = ['shrimp', 'cow', 'fish', 'chicken'];
-    let db = JSON.parse(localStorage.getItem("v1000_master_db") || "[]");
+    // أوزان السيرفر حسب كلامك
+    const caps = {shrimp:15, cow:10, fish:6, chicken:4}; 
+    const veggies = ['corn', 'tomato', 'carrot', 'pepper'];
+    const meats = ['shrimp', 'cow', 'fish', 'chicken'];
+    
+    let db = JSON.parse(localStorage.getItem("v1000_supreme_db") || "[]");
 
-    function add(f) { 
-        db.push(f); 
-        if(window.navigator.vibrate) window.navigator.vibrate([40]);
-        save(); 
-    }
+    function add(f) { db.push(f); save(); }
     function undo() { db.pop(); save(); }
-    function reset() { if(confirm("PERMANENT DATA WIPE?")) { db = []; save(); } }
-    function save() { localStorage.setItem("v1000_master_db", JSON.stringify(db)); update(); }
+    function reset() { if(confirm("تصفير الذاكرة؟")) { db = []; save(); } }
+    function save() { localStorage.setItem("v1000_supreme_db", JSON.stringify(db)); update(); }
 
     function update() {
         const len = db.length;
         document.getElementById("history").innerHTML = db.slice(-20).map(x => `<div class="h-node">${emojis[x]}</div>`).join("");
-        
-        if (len === 0) {
-            document.getElementById("g6").innerText = "READY";
-            document.getElementById("target-emoji").innerText = "❓";
-            document.getElementById("m-type").innerText = "AI STATUS: IDLE";
-            return;
-        }
+        if (len === 0) return;
 
-        const recent = db.slice(-8);
-        const lastMove = db[len - 1];
-        const isRepeater = (len > 1 && db[len-1] === db[len-2]);
+        // تحليل المجموعة (3+2 / 3+3)
+        let last4 = db.slice(-4);
+        let vegCount = last4.filter(x => veggies.includes(x)).length;
+        let isDualLoop = (len > 3 && db[len-1] === db[len-3] && db[len-2] === db[len-4]); // كشف تكرار صنفين
 
-        // تحليل بصمة السيرفر
-        const uniqueInRecent = [...new Set(recent)].length;
-        const mType = document.getElementById("m-type");
-        if(uniqueInRecent <= 3) { 
-            mType.innerText = "STATUS: STABLE PATTERN (REPEATER)"; 
-            mType.className = "machine-type type-stable"; 
-        } else { 
-            mType.innerText = "STATUS: CHAOS PATTERN (VOLATILE)"; 
-            mType.className = "machine-type type-chaos"; 
-        }
+        document.getElementById("pattern-display").innerText = isDualLoop ? "ALERT: DUAL LOOP DETECTED" : "PATTERN: " + (vegCount >= 3 ? "MAX VEGGIES REACHED" : "BALANCED");
 
         let tableHTML = "", maxScore = -1, bestTarget = "";
-        let finalScores = {};
+        let scores = {};
 
-        Object.keys(config).forEach(f => {
+        Object.keys(emojis).forEach(f => {
             let lastIdx = db.lastIndexOf(f);
-            let abs = (lastIdx === -1) ? Math.min(len, 100) : (len - 1 - lastIdx);
+            let abs = (lastIdx === -1) ? 100 : (len - 1 - lastIdx);
+            let countIn100 = db.slice(-100).filter(x => x === f).length;
             
-            // 1. خوارزمية "الضغط": متى يجبر السيرفر على إخراج الصنف؟
-            let pressure = (abs / (100 / config[f])) * 10;
-            
-            // 2. خوارزمية "الزخم": هل الصنف في حالة نشاط حالية؟
-            let momentum = recent.filter(x => x === f).length * 15;
+            let score = 0;
 
-            // 3. دمج ذكاء الماستر مايند
-            let totalScore = pressure;
+            // 1. قاعدة الـ 4 خضار المستحيلة
+            if (veggies.includes(f) && vegCount >= 3) {
+                score = -100; // منع كامل
+            } else {
+                score = abs * 2; // غياب أطول = احتمال أكبر
+            }
 
-            // كشف موجة التكرار
-            if (f === lastMove && isRepeater) totalScore += 60; 
-            
-            // كشف "عزل الصنف" (لو السيرفر قفله مؤقتاً)
-            if (f === lastMove && !isRepeater && uniqueInRecent > 4) totalScore -= 80;
+            // 2. تطبيق أسقف اللحوم
+            if (meats.includes(f)) {
+                if (countIn100 >= caps[f]) score -= 200; // لو الصنف استنفذ حصته
+                if (vegCount >= 2) score += 50; // تعويض المجموعة
+            }
 
-            // مكافأة للأصناف التي بدأت تظهر فجأة بعد غياب (بداية موجة)
-            if (recent.includes(f) && abs < 5) totalScore += momentum;
+            // 3. ذكاء التكرار والثنائيات
+            if (isDualLoop && (f === db[len-1] || f === db[len-2])) score += 150;
+            if (f === db[len-1] && db[len-1] === db[len-2]) score += 80; // موجة تكرار
 
-            // فخ النادر: لو النادر غاب عن وقته الطبيعي بـ 3 أضعاف
-            if (config[f] < 10 && abs > (100/config[f])*3) totalScore += 150;
+            scores[f] = score;
+            if (score > maxScore) { maxScore = score; bestTarget = f; }
 
-            finalScores[f] = totalScore;
-            
-            let displayScore = Math.min(100, Math.max(0, Math.round(totalScore)));
-            document.getElementById(`bar-${f}`).style.width = displayScore + "%";
-
-            if (totalScore > maxScore) { maxScore = totalScore; bestTarget = f; }
-            
-            if(displayScore >= 95 && window.navigator.vibrate) window.navigator.vibrate([100, 50, 100]);
-
-            tableHTML += `<tr>
-                <td>${emojis[f]}</td>
-                <td>${abs}</td>
-                <td style="color:${recent.includes(f)?'#00ff88':'#444'}">${recent.includes(f)?'ACTIVE':'COLD'}</td>
-                <td class="jafala-text ${displayScore>85?'blink':''}" style="color:${displayScore>85?'#ff3131':'#888'}">${displayScore}%</td>
-            </tr>`;
+            let displayPct = Math.min(100, Math.max(0, score));
+            document.getElementById(`bar-${f}`).style.width = displayPct + "%";
+            tableHTML += `<tr><td>${emojis[f]}</td><td>${countIn100}/${caps[f] || '--'}</td><td>${displayPct}%</td></tr>`;
         });
 
         document.getElementById("radar-body").innerHTML = tableHTML;
         document.getElementById("target-emoji").innerText = emojis[bestTarget];
-
-        // ترتيب الشريط العلوي (أقوى 6 احتمالات)
-        let sorted = Object.keys(finalScores).sort((a,b) => finalScores[b] - finalScores[a]);
-        document.getElementById("g6").innerText = sorted.slice(0,6).map(x => emojis[x]).join("");
+        document.getElementById("ai-msg").innerText = "AI ENGINE: " + (maxScore > 100 ? "HIGH CONFIDENCE" : "SCANNING...");
     }
     window.onload = update;
 </script>
 </body>
 </html>
+
