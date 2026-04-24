@@ -3,63 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V3000 - GHOST AI ENGINE</title>
+    <title>THE BEAST V4 - BEHAVIORAL AI</title>
     <style>
-        :root { --bg: #000; --neon: #bcff00; --red: #ff003c; --gold: #f5af19; }
-        body { font-family: 'Courier New', monospace; background: var(--bg); color: #fff; margin: 0; padding: 10px; }
-        .ghost-container { max-width: 450px; margin: auto; border: 2px solid #111; border-radius: 20px; padding: 15px; position: relative; overflow: hidden; }
+        :root { --bg: #000; --main: #00ff41; --danger: #ff0000; --warn: #ffcc00; }
+        body { font-family: 'monospace'; background: var(--bg); color: var(--main); margin: 0; padding: 10px; overflow-x: hidden; }
+        .beast-wrap { max-width: 450px; margin: auto; border: 1px solid var(--main); border-radius: 15px; padding: 15px; background: rgba(0,255,65,0.02); }
         
-        /* رادار الموجات */
-        .wave-analyzer { height: 60px; background: #050505; border-radius: 10px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; border: 1px solid #1a1a1a; position: relative; }
-        #wave-status { font-weight: bold; font-size: 14px; letter-spacing: 2px; }
-        .scanner-line { position: absolute; width: 2px; height: 100%; background: var(--neon); left: 0; animation: scan 2s infinite linear; opacity: 0.3; }
-        @keyframes scan { 100% { left: 100%; } }
+        /* رادار السلوك */
+        .behavior-radar { display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px; padding: 10px; border: 1px solid #111; border-radius: 10px; text-align: center; }
+        #radar-status { font-size: 16px; font-weight: bold; text-transform: uppercase; }
+        .logic-note { font-size: 9px; color: #555; }
 
-        .strip-box { display: flex; gap: 8px; overflow-x: auto; flex-direction: row-reverse; padding: 10px 0; border-bottom: 1px solid #111; }
-        .n { min-width: 42px; height: 42px; background: #080808; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid #222; }
+        .history-row { display: flex; gap: 5px; overflow-x: auto; flex-direction: row-reverse; padding: 10px 0; }
+        .slot { min-width: 45px; height: 45px; background: #000; border: 1px solid #222; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 26px; }
 
-        /* التوقعات المخفية */
-        .ghost-picks { min-height: 100px; display: flex; align-items: center; justify-content: center; gap: 20px; background: radial-gradient(circle, #111 0%, #000 100%); border-radius: 15px; margin: 15px 0; border: 1px dashed #333; }
-        .target-item { font-size: 45px; transition: 0.5s; filter: grayscale(1); opacity: 0.3; }
-        .target-item.active { filter: grayscale(0); opacity: 1; transform: scale(1.2); text-shadow: 0 0 15px var(--neon); }
+        /* التوقعات الهجومية */
+        .attack-picks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .target-box { background: #050505; border: 1px solid #222; border-radius: 12px; padding: 15px; text-align: center; position: relative; }
+        .target-box b { font-size: 35px; display: block; margin-bottom: 5px; }
+        .target-box span { font-size: 10px; color: var(--warn); font-weight: bold; }
 
-        .control-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .c-btn { background: #000; border: 1px solid #1a1a1a; border-radius: 12px; padding: 22px 0; position: relative; }
-        .c-btn span { font-size: 32px; z-index: 2; position: relative; }
-        .heat-map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--neon); opacity: 0; transition: 0.3s; z-index: 1; }
+        .input-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .i-btn { background: #000; border: 1px solid #333; padding: 20px 0; border-radius: 12px; color: #fff; position: relative; }
+        .i-btn span { font-size: 30px; position: relative; z-index: 2; }
+        .abs-tag { position: absolute; top: 2px; right: 4px; font-size: 8px; color: #444; }
 
-        .mini-stats { display: flex; justify-content: space-between; font-size: 10px; color: #444; margin-top: 15px; }
+        .btn-zone { display: flex; gap: 10px; margin-top: 20px; }
+        .action-btn { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #000; color: #555; font-size: 11px; }
     </style>
 </head>
 <body>
 
-<div class="ghost-container">
-    <div class="wave-analyzer">
-        <div class="scanner-line"></div>
-        <div id="wave-status">INITIALIZING AI...</div>
+<div class="beast-wrap">
+    <div class="behavior-radar">
+        <div id="radar-status">ANALYZING SERVER...</div>
+        <div class="logic-note">BEHAVIORAL AI ENGINE V4.2</div>
     </div>
 
-    <div class="strip-box" id="history"></div>
+    <div class="history-row" id="history"></div>
 
-    <div class="ghost-picks" id="display">
-        <div style="color:#222">NO TARGETS YET</div>
+    <div class="attack-picks" id="picks">
+        <div class="target-box"><b>?</b><span>Primary</span></div>
+        <div class="target-box"><b>?</b><span>Secondary</span></div>
     </div>
 
-    <div class="control-grid">
-        <button class="c-btn" onclick="add('corn')"><span>🌽</span><div id="h-corn" class="heat-map"></div></button>
-        <button class="c-btn" onclick="add('tomato')"><span>🍅</span><div id="h-tomato" class="heat-map"></div></button>
-        <button class="c-btn" onclick="add('carrot')"><span>🥕</span><div id="h-carrot" class="heat-map"></div></button>
-        <button class="c-btn" onclick="add('pepper')"><span></span>🌶️<div id="h-pepper" class="heat-map"></div></button>
-        <button class="c-btn" onclick="add('shrimp')"><span>🦐</span><div id="h-shrimp" class="heat-map"></div></button>
-        <button class="c-btn" onclick="add('cow')"><span>🐄</span><div id="h-cow" class="heat-map"></div></button>
-        <button class="c-btn" onclick="add('fish')"><span>🐟</span><div id="h-fish" class="heat-map"></div></button>
-        <button class="c-btn" onclick="add('chicken')"><span>🐔</span><div id="h-chicken" class="heat-map"></div></button>
+    <div class="input-grid">
+        <button class="i-btn" onclick="add('corn')"><div class="abs-tag" id="a-corn">0</div><span>🌽</span></button>
+        <button class="i-btn" onclick="add('tomato')"><div class="abs-tag" id="a-tomato">0</div><span>🍅</span></button>
+        <button class="i-btn" onclick="add('carrot')"><div class="abs-tag" id="a-carrot">0</div><span>🥕</span></button>
+        <button class="i-btn" onclick="add('pepper')"><div class="abs-tag" id="a-pepper">0</div><span>🌶️</span></button>
+        <button class="i-btn" onclick="add('shrimp')"><div class="abs-tag" id="a-shrimp">0</div><span>🦐</span></button>
+        <button class="i-btn" onclick="add('cow')"><div class="abs-tag" id="a-cow">0</div><span>🐄</span></button>
+        <button class="i-btn" onclick="add('fish')"><div class="abs-tag" id="a-fish">0</div><span>🐟</span></button>
+        <button class="i-btn" onclick="add('chicken')"><div class="abs-tag" id="a-chicken">0</div><span>🐔</span></button>
     </div>
 
-    <div class="mini-stats">
-        <span id="absent-top"></span>
-        <span onclick="reset()" style="cursor:pointer; color:var(--red)">[WIPE DATA]</span>
-        <span onclick="undo()" style="cursor:pointer">[UNDO]</span>
+    <div class="btn-zone">
+        <button class="action-btn" onclick="undo()">UNDO</button>
+        <button class="action-btn" style="color:var(--danger)" onclick="reset()">RESET ALL</button>
     </div>
 </div>
 
@@ -68,57 +69,62 @@
     const mults = {corn:5, tomato:5, carrot:5, pepper:5, shrimp:10, cow:15, fish:25, chicken:45};
     const caps = {corn:100, tomato:100, carrot:100, pepper:100, shrimp:15, cow:10, fish:6, chicken:2};
     
-    let db = JSON.parse(localStorage.getItem("ghost_v3_db") || "[]");
+    let db = JSON.parse(localStorage.getItem("beast_v4_db") || "[]");
 
     function add(f) { db.push(f); save(); }
     function undo() { db.pop(); save(); }
-    function reset() { if(confirm("تصفير الذاكرة؟")) { db = []; save(); } }
-    function save() { localStorage.setItem("ghost_v3_db", JSON.stringify(db)); update(); }
+    function reset() { if(confirm("تصفير؟")) { db = []; save(); } }
+    function save() { localStorage.setItem("beast_v4_db", JSON.stringify(db)); update(); }
 
     function update() {
         const len = db.length;
-        document.getElementById("history").innerHTML = db.slice(-12).map(x => `<div class="n">${emojis[x]}</div>`).join("");
+        document.getElementById("history").innerHTML = db.slice(-10).map(x => `<div class="slot">${emojis[x]}</div>`).join("");
         if (len === 0) return;
 
-        let last10 = db.slice(-10);
+        let last5 = db.slice(-5);
         let meats = ['shrimp', 'cow', 'fish', 'chicken'];
-        let meatTrend = last10.filter(x => meats.includes(x)).length;
+        let status = document.getElementById("radar-status");
         
-        let status = document.getElementById("wave-status");
-        let display = document.getElementById("display");
-
-        // منطق الـ Ghost Mode (الذكاء الحقيقي)
-        if (meatTrend >= 4) {
-            status.innerText = "DANGER: MEAT OVERLOAD";
-            status.style.color = var(--red);
-        } else if (last10.slice(-5).filter(x => !meats.includes(x)).length === 5) {
-            status.innerText = "WAIT: SERVER DRAINING";
-            status.style.color = "#555";
-            display.innerHTML = "<div style='color:#333'>-- DO NOT PLAY --</div>";
-            return;
+        // تحليل سلوك السيرفر
+        let meatGap = db.length - 1 - db.findLastIndex(x => meats.includes(x));
+        
+        if (meatGap > 8) {
+            status.innerText = "HUNTING MODE: ON";
+            status.style.color = "var(--warn)";
+        } else if (last5.filter(x => meats.includes(x)).length >= 2) {
+            status.innerText = "REBOUND: COOLING DOWN";
+            status.style.color = "#444";
         } else {
-            status.innerText = "SYSTEM READY - SNIPE NOW";
-            status.style.color = var(--neon);
+            status.innerText = "SERVER: STABLE";
+            status.style.color = "var(--main)";
         }
 
         let scores = {};
         Object.keys(emojis).forEach(f => {
-            let abs = (db.lastIndexOf(f) === -1) ? len : (len - 1 - db.lastIndexOf(f));
-            let c100 = db.slice(-100).filter(x => x === f).length;
+            let lastIdx = db.lastIndexOf(f);
+            let abs = (lastIdx === -1) ? len : (len - 1 - lastIdx);
+            let count100 = db.slice(-100).filter(x => x === f).length;
+            document.getElementById(`a-${f}`).innerText = abs;
+
+            // خوارزمية السلوك: الغياب مضروب في "تعطش" الصنف
+            let score = abs * (1 / mults[f]) * 100;
             
-            // سكور يعتمد على الغياب النسبي للضرب
-            let score = (abs * 3) / (mults[f] / 10);
+            // ميزة التريند الذكي
+            if (abs === 0) score = 0; // بعد ما يجي يبرد
+            if (abs > 15 && meats.includes(f)) score *= 1.5; // لو غاب اوي يتقل
             
-            // ميزة الـ Combo (لو لسه جاي يفضل في الحسابات)
-            if (abs === 0) score += 50;
-            if (c100 >= caps[f]) score = -999;
-            
+            if (count100 >= caps[f]) score = -999;
             scores[f] = score;
-            document.getElementById(`h-${f}`).style.opacity = Math.min(0.6, score/200);
         });
 
-        let top3 = Object.keys(emojis).sort((a,b) => scores[b] - scores[a]).slice(0, 3);
-        display.innerHTML = top3.map(x => `<div class="target-item active">${emojis[x]}</div>`).join("");
+        // اختيار الهدفين الأهم (Primary & Secondary)
+        let sortedMeats = meats.sort((a,b) => scores[b] - scores[a]);
+        let sortedVeg = ['corn', 'tomato', 'carrot', 'pepper'].sort((a,b) => scores[b] - scores[a]);
+
+        document.getElementById("picks").innerHTML = `
+            <div class="target-box"><b>${emojis[sortedMeats[0]]}</b><span>Primary Meat (x${mults[sortedMeats[0]]})</span></div>
+            <div class="target-box"><b>${emojis[sortedVeg[0]]}</b><span>Safe Veg (x5)</span></div>
+        `;
     }
     window.onload = update;
 </script>
