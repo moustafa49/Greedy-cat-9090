@@ -3,74 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V6.0 HYBRID - NO LIMITS</title>
+    <title>V7.0 UNLOCKED - ALL DATA</title>
     <style>
-        :root { --bg: #000; --neon: #00ff41; --danger: #ff003c; --gold: #ffd700; --panel: #0a0a0a; }
+        :root { --bg: #000; --neon: #00ff41; --danger: #ff003c; --gold: #ffd700; --panel: #0d0d0d; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 5px; }
-        .container { max-width: 480px; margin: auto; border: 1px solid #222; border-radius: 20px; padding: 12px; background: var(--panel); }
+        .main-container { max-width: 480px; margin: auto; border: 1px solid #333; border-radius: 20px; padding: 12px; background: var(--panel); }
         
-        .header { text-align: center; padding: 5px; border-bottom: 1px solid #222; margin-bottom: 10px; }
-        #alert-box { font-size: 14px; font-weight: bold; color: var(--neon); }
+        /* تنبيه نصي فقط */
+        .status-header { text-align: center; padding: 8px; border-bottom: 1px solid #222; margin-bottom: 10px; }
+        #warn-text { font-size: 15px; font-weight: bold; color: var(--neon); }
 
-        .history { display: flex; gap: 5px; overflow-x: auto; flex-direction: row-reverse; padding: 10px 0; margin-bottom: 10px; }
-        .node { min-width: 38px; height: 38px; background: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 1px solid #222; }
+        .strip-flow { display: flex; gap: 6px; overflow-x: auto; flex-direction: row-reverse; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid #1a1a1a; }
+        .node { min-width: 40px; height: 40px; background: #000; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid #333; }
 
-        /* منطقة التوقعات الثابتة */
-        .picks-box { background: #000; border-radius: 15px; padding: 10px; margin-bottom: 15px; border: 1px solid #1a1a1a; }
-        .pick-line { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; border-bottom: 1px solid #111; padding-bottom: 5px; }
-        .p-label { font-size: 11px; color: var(--gold); width: 60px; }
-        .p-icons { display: flex; gap: 8px; font-size: 24px; }
+        /* منطقة الـ Picks (ثابتة لا تختفي) */
+        .all-picks { background: #000; border-radius: 15px; padding: 12px; margin-bottom: 15px; border: 1px solid #222; }
+        .row-p { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #111; padding-bottom: 5px; }
+        .label-p { font-size: 11px; color: var(--gold); font-weight: bold; width: 65px; }
+        .icons-p { display: flex; gap: 10px; font-size: 26px; }
 
-        .target-center { background: radial-gradient(circle, #111 0%, #000 100%); border: 1px solid #222; border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 15px; }
-        .target-center b { font-size: 45px; display: block; }
+        .target-hero { background: radial-gradient(circle, #151515 0%, #000 100%); border: 1px solid #222; border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 15px; }
+        .target-hero b { font-size: 55px; display: block; filter: drop-shadow(0 0 10px var(--neon)); }
 
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .btn { background: #000; border: 1px solid #222; border-radius: 12px; padding: 18px 0; color: #fff; position: relative; }
-        .btn span { font-size: 28px; }
-        .abs-val { position: absolute; top: 2px; right: 5px; font-size: 9px; color: #444; }
+        .input-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .btn-in { background: #000; border: 1px solid #333; border-radius: 15px; padding: 22px 0; position: relative; color: #fff; }
+        .btn-in span { font-size: 32px; z-index: 2; position: relative; }
+        .abs-tag { position: absolute; top: 3px; right: 6px; font-size: 10px; color: #555; font-weight: bold; }
 
-        .stats-table { width: 100%; margin-top: 15px; font-size: 10px; text-align: center; border-collapse: collapse; color: #666; }
-        .stats-table th { padding-bottom: 5px; border-bottom: 1px solid #222; }
-        .stats-table td { padding: 8px 0; border-bottom: 1px solid #0a0a0a; }
+        .full-stats { width: 100%; margin-top: 15px; font-size: 11px; text-align: center; border-collapse: collapse; }
+        .full-stats th { color: #444; border-bottom: 1px solid #222; padding-bottom: 8px; }
+        .full-stats td { padding: 10px 0; border-bottom: 1px solid #0a0a0a; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header"><div id="alert-box">SERVER: CONNECTED</div></div>
-
-    <div class="history" id="history"></div>
-
-    <div class="picks-box">
-        <div class="pick-line"><span class="p-label">PICKS 6</span><div id="p6" class="p-icons"></div></div>
-        <div class="pick-line"><span class="p-label">PICKS 5</span><div id="p5" class="p-icons"></div></div>
-        <div class="pick-line"><span class="p-label">PICKS 4</span><div id="p4" class="p-icons"></div></div>
+<div class="main-container">
+    <div class="status-header">
+        <div id="warn-text">SYSTEM ACTIVE</div>
     </div>
 
-    <div class="target-center">
-        <span style="font-size: 9px; color: #555;">الهدف الرئيسي</span>
+    <div class="strip-flow" id="history"></div>
+
+    <div class="target-hero">
+        <span style="font-size: 10px; color: #555;">الهدف الذهبي</span>
         <b id="main-target">?</b>
     </div>
 
-    <div class="grid">
-        <button class="btn" onclick="add('corn')"><div class="abs-val" id="a-corn">0</div><span>🌽</span></button>
-        <button class="btn" onclick="add('tomato')"><div class="abs-val" id="a-tomato">0</div><span>🍅</span></button>
-        <button class="btn" onclick="add('carrot')"><div class="abs-val" id="a-carrot">0</div><span>🥕</span></button>
-        <button class="btn" onclick="add('pepper')"><div class="abs-val" id="a-pepper">0</div><span>🌶️</span></button>
-        <button class="btn" onclick="add('shrimp')"><div class="abs-val" id="a-shrimp">0</div><span>🦐</span></button>
-        <button class="btn" onclick="add('cow')"><div class="abs-val" id="a-cow">0</div><span>🐄</span></button>
-        <button class="btn" onclick="add('fish')"><div class="abs-val" id="a-fish">0</div><span>🐟</span></button>
-        <button class="btn" onclick="add('chicken')"><div class="abs-val" id="a-chicken">0</div><span>🐔</span></button>
+    <div class="all-picks">
+        <div class="row-p"><span class="label-p">PICKS 6</span><div id="p6" class="icons-p"></div></div>
+        <div class="row-p"><span class="label-p">PICKS 5</span><div id="p5" class="icons-p"></div></div>
+        <div class="row-p"><span class="label-p">PICKS 4</span><div id="p4" class="icons-p"></div></div>
     </div>
 
-    <table class="stats-table">
-        <thead><tr><th>الصنف</th><th>الضرب</th><th>الغياب</th><th>السقف</th></tr></thead>
-        <tbody id="s-body"></tbody>
+    <div class="input-grid">
+        <button class="btn-in" onclick="add('corn')"><div class="abs-tag" id="a-corn">0</div><span>🌽</span></button>
+        <button class="btn-in" onclick="add('tomato')"><div class="abs-tag" id="a-tomato">0</div><span>🍅</span></button>
+        <button class="btn-in" onclick="add('carrot')"><div class="abs-tag" id="a-carrot">0</div><span>🥕</span></button>
+        <button class="btn-in" onclick="add('pepper')"><div class="abs-tag" id="a-pepper">0</div><span>🌶️</span></button>
+        <button class="btn-in" onclick="add('shrimp')"><div class="abs-tag" id="a-shrimp">0</div><span>🦐</span></button>
+        <button class="btn-in" onclick="add('cow')"><div class="abs-tag" id="a-cow">0</div><span>🐄</span></button>
+        <button class="btn-in" onclick="add('fish')"><div class="abs-tag" id="a-fish">0</div><span>🐟</span></button>
+        <button class="btn-in" onclick="add('chicken')"><div class="abs-tag" id="a-chicken">0</div><span>🐔</span></button>
+    </div>
+
+    <table class="full-stats">
+        <thead><tr><th>الصنف</th><th>الضرب</th><th>الغياب</th><th>التريند</th></tr></thead>
+        <tbody id="stats-body"></tbody>
     </table>
 
-    <div style="display:flex; gap:10px; margin-top:15px;">
-        <button onclick="undo()" style="flex:1; padding:12px; background:#111; color:#fff; border:none; border-radius:10px;">UNDO</button>
-        <button onclick="reset()" style="flex:1; padding:12px; background:#200; color:#fff; border:none; border-radius:10px;">RESET</button>
+    <div style="display:flex; gap:10px; margin-top:20px;">
+        <button onclick="undo()" style="flex:1; padding:15px; border-radius:12px; background:#111; color:#fff; border:none;">تراجع</button>
+        <button onclick="reset()" style="flex:1; padding:15px; border-radius:12px; background:#300; color:#fff; border:none;">مسح الكل</button>
     </div>
 </div>
 
@@ -79,58 +82,56 @@
     const mults = {corn:5, tomato:5, carrot:5, pepper:5, shrimp:10, cow:15, fish:25, chicken:45};
     const caps = {corn:100, tomato:100, carrot:100, pepper:100, shrimp:15, cow:10, fish:6, chicken:2};
     
-    let db = JSON.parse(localStorage.getItem("v6_hybrid_db") || "[]");
+    let db = JSON.parse(localStorage.getItem("v7_unlocked_db") || "[]");
 
     function add(f) { db.push(f); save(); }
     function undo() { db.pop(); save(); }
-    function reset() { if(confirm("مسح؟")) { db = []; save(); } }
-    function save() { localStorage.setItem("v6_hybrid_db", JSON.stringify(db)); update(); }
+    function reset() { if(confirm("أكيد تمسح؟")) { db = []; save(); } }
+    function save() { localStorage.setItem("v7_unlocked_db", JSON.stringify(db)); update(); }
 
     function update() {
         const len = db.length;
         document.getElementById("history").innerHTML = db.slice(-10).map(x => `<div class="node">${emojis[x]}</div>`).join("");
         if (len === 0) return;
 
-        let last100 = db.slice(-100);
-        let meats = ['shrimp', 'cow', 'fish', 'chicken'];
         let veggies = ['corn', 'tomato', 'carrot', 'pepper'];
+        let meats = ['shrimp', 'cow', 'fish', 'chicken'];
         
-        // تنبيه السحب (بدون إخفاء)
-        let vegStreak = db.slice(-5).filter(x => veggies.includes(x)).length;
-        let alertBox = document.getElementById("alert-box");
-        if (vegStreak >= 5) {
-            alertBox.innerText = "WAIT: SERVER DRAINING (HIGH RISK)";
-            alertBox.style.color = "var(--danger)";
+        // تنبيه نصي فقط - لا يؤثر على ظهور البيانات
+        let last5Veg = db.slice(-5).filter(x => veggies.includes(x)).length;
+        let warn = document.getElementById("warn-text");
+        if (last5Veg >= 5) {
+            warn.innerText = "⚠️ SERVER DRAINING - CAUTION";
+            warn.style.color = "var(--danger)";
         } else {
-            alertBox.innerText = "SERVER: STABLE / HUNTING";
-            alertBox.style.color = "var(--neon)";
+            warn.innerText = "✅ SYSTEM READY - STABLE";
+            warn.style.color = "var(--neon)";
         }
 
         let scores = {};
         Object.keys(emojis).forEach(f => {
             let abs = (db.lastIndexOf(f) === -1) ? len : (len - 1 - db.lastIndexOf(f));
             document.getElementById(`a-${f}`).innerText = abs;
-            let score = abs * (50 / mults[f]);
-            if (db.slice(-6).filter(x => x === f).length >= 2) score += 150;
-            if (last100.filter(x => x === f).length >= caps[f]) score = -999;
+            let score = abs * (60 / mults[f]);
+            if (db.slice(-6).filter(x => x === f).length >= 2) score += 200;
             scores[f] = score;
         });
 
         const getTop = (list, n) => [...list].sort((a,b) => scores[b] - scores[a]).slice(0, n);
 
-        // التوقعات ثابتة مهما حصل
+        // تحديث التوقعات (مفتوحة دائماً)
         document.getElementById("p6").innerHTML = [...getTop(veggies, 3), ...getTop(meats, 3)].map(x => emojis[x]).join("");
         document.getElementById("p5").innerHTML = [...getTop(veggies, 3), ...getTop(meats, 2)].map(x => emojis[x]).join("");
         document.getElementById("p4").innerHTML = [...getTop(veggies, 2), ...getTop(meats, 2)].map(x => emojis[x]).join("");
         
-        let bestMeat = getTop(meats, 1)[0];
-        document.getElementById("main-target").innerText = emojis[bestMeat];
+        document.getElementById("main-target").innerText = emojis[getTop(meats, 1)[0]];
 
-        let tableHtml = "";
+        let tBody = "";
         Object.keys(emojis).forEach(f => {
-            tableHtml += `<tr><td>${emojis[f]}</td><td>x${mults[f]}</td><td>${len-1-db.lastIndexOf(f)}</td><td>${last100.filter(x=>x===f).length}/${caps[f]}</td></tr>`;
+            let trnd = db.slice(-10).filter(x => x === f).length;
+            tBody += `<tr><td>${emojis[f]}</td><td>x${mults[f]}</td><td>${len-1-db.lastIndexOf(f)}</td><td>${trnd}x</td></tr>`;
         });
-        document.getElementById("s-body").innerHTML = tableHtml;
+        document.getElementById("stats-body").innerHTML = tBody;
     }
     window.onload = update;
 </script>
